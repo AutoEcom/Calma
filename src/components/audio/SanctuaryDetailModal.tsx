@@ -2,7 +2,7 @@ import { Clock, Headphones, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CATEGORY_LABELS, parseAudioCredits, type AudioSanctuaryCategory } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
-import { formatPlayCount, resolvePlayCount } from '../../lib/playCount'
+import { PlayCountStat } from './PlayCountStat'
 import { formatEurFromCents } from '../../lib/formatPrice'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import type { Tables } from '../../lib/database.types'
@@ -23,7 +23,6 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
   const credits = parseAudioCredits(row.audio_credits)
   const guide = credits.guide ?? row.instructor_name
   const comingSoon = row.sanctuary_status === 'coming_soon'
-  const plays = formatPlayCount(resolvePlayCount(row.play_count))
   const category =
     row.audio_sanctuary_category &&
     CATEGORY_LABELS[row.audio_sanctuary_category as AudioSanctuaryCategory]
@@ -37,9 +36,11 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
           </div>
         )}
         <div className="flex flex-wrap gap-2 text-xs">
-          <span className="rounded-full bg-[var(--accent)]/10 px-2.5 py-1 font-medium text-[var(--accent)]">
-            Plays: {plays}
-          </span>
+          <PlayCountStat
+            count={row.play_count}
+            variant="muted"
+            className="rounded-full bg-[var(--accent)]/10 px-2.5 py-1 text-[var(--accent)] dark:text-[var(--accent)]"
+          />
           <span className="rounded-full bg-slate-200/80 px-2.5 py-1 text-slate-700 dark:bg-white/10 dark:text-neutral-300">
             {row.duration_minutes} min
           </span>

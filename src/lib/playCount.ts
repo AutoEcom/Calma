@@ -14,10 +14,23 @@ export function formatPlayCount(count: number): string {
   return count.toLocaleString()
 }
 
-/** Stored Supabase value; defaults to 0 when unset. */
-export function resolvePlayCount(stored: number | null | undefined): number {
-  if (typeof stored === 'number' && Number.isFinite(stored) && stored >= 0) return stored
+/** Coerce API values (number or string) into a non-negative integer. */
+export function resolvePlayCount(stored: number | string | null | undefined): number {
+  if (stored == null) return 0
+  if (typeof stored === 'number') {
+    return Number.isFinite(stored) ? Math.max(0, Math.floor(stored)) : 0
+  }
+  if (typeof stored === 'string') {
+    const trimmed = stored.trim().replace(/,/g, '')
+    if (!trimmed) return 0
+    const n = Number.parseInt(trimmed, 10)
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  }
   return 0
+}
+
+export function formatPlayCountLabel(stored: number | string | null | undefined): string {
+  return `Plays: ${formatPlayCount(resolvePlayCount(stored))}`
 }
 
 export function parseDisplayPlayCountInput(raw: string): { value: number; error?: string } {

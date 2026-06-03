@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
-import { formatPlayCount, resolvePlayCount } from '../../lib/playCount'
+import { PlayCountStat } from './PlayCountStat'
 import { sanctuaryCoverUrl, sanctuaryMeshGradient } from '../../lib/sanctuaryCover'
 import type { Tables } from '../../lib/database.types'
 import {
@@ -31,8 +31,6 @@ export function SanctuaryCatalogCard({ row, index, hasAccess }: Props) {
   const guide = credits.guide ?? row.instructor_name
   const frequency = credits.frequency
   const comingSoon = row.sanctuary_status === 'coming_soon'
-  const plays = formatPlayCount(resolvePlayCount(row.play_count))
-
   return (
     <>
       <motion.article
@@ -90,14 +88,13 @@ export function SanctuaryCatalogCard({ row, index, hasAccess }: Props) {
               <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white group-hover:text-[#2DD4BF]">
                 {row.title}
               </h3>
-              <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-slate-300">
+              <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-slate-300">
                 <Headphones className="h-3.5 w-3.5 shrink-0 text-[#2DD4BF]" />
                 <span className="max-w-full truncate">{guide}</span>
                 <span className="text-slate-500">·</span>
                 <span className="shrink-0 tabular-nums">{row.duration_minutes} min</span>
-              </p>
-              <p className="mt-1.5 text-[10px] font-medium tracking-wide text-slate-400">
-                Plays: {plays}
+                <span className="text-slate-500">·</span>
+                <PlayCountStat count={row.play_count} variant="onDark" />
               </p>
             </div>
 

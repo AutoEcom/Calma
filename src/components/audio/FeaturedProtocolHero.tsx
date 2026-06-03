@@ -9,6 +9,7 @@ import type { Tables } from '../../lib/database.types'
 import { badgeOnImageWarm } from '../../lib/solidBadge'
 import { cn } from '../../lib/utils'
 import { useAuth } from '../../providers/AuthProvider'
+import { PlayCountStat } from './PlayCountStat'
 
 type Row = Tables<'classes'>
 
@@ -67,9 +68,13 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
           <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl md:text-3xl dark:text-white">
             {featured.title}
           </h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-white/50">
-            {guide} · {featured.duration_minutes} min
-            {credits.frequency ? ` · ${credits.frequency}` : ''}
+          <p className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-slate-600 dark:text-white/50">
+            <span>
+              {guide} · {featured.duration_minutes} min
+              {credits.frequency ? ` · ${credits.frequency}` : ''}
+            </span>
+            <span className="text-slate-400 dark:text-neutral-500">·</span>
+            <PlayCountStat count={featured.play_count} />
           </p>
           {featured.description && (
             <p className="mt-4 line-clamp-4 text-sm leading-relaxed tracking-wide text-slate-600 dark:text-white/65">

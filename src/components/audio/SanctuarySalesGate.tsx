@@ -12,6 +12,7 @@ import type { ClassDetails } from '../../lib/classTypes'
 import type { SanctuaryBundleOffer } from '../../lib/sanctuaryBundles'
 import { badgeOnImageAccent } from '../../lib/solidBadge'
 import { cn } from '../../lib/utils'
+import { PlayCountStat } from './PlayCountStat'
 
 function coverArtUrl(row: ClassDetails): string {
   return (
@@ -117,6 +118,12 @@ export function SanctuarySalesGate({ meditation, bundleOffer }: Props) {
                 <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight text-white">
                   {meditation.title}
                 </h1>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <PlayCountStat count={meditation.play_count} variant="prominent" />
+                  <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/80">
+                    {meditation.duration_minutes} min
+                  </span>
+                </div>
               </div>
 
               {meditation.description && (

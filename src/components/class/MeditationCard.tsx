@@ -14,6 +14,7 @@ import {
   badgeOnImageWarm,
 } from '../../lib/solidBadge'
 import { cn } from '../../lib/utils'
+import { PlayCountStat } from '../audio/PlayCountStat'
 
 type Props = {
   cls: ClassDetails
@@ -85,9 +86,13 @@ export function MeditationCard({ cls, index = 0 }: Props) {
             <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight text-[var(--text)] group-hover:text-[var(--accent)] dark:text-white">
               {cls.title}
             </h3>
-            <p className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] dark:text-white/55">
+            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-[var(--text-muted)] dark:text-white/55">
               <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--accent)]" />
-              {cls.duration_minutes} min · on demand
+              <span>
+                {cls.duration_minutes} min · on demand
+              </span>
+              <span className="text-neutral-400 dark:text-neutral-500">·</span>
+              <PlayCountStat count={cls.play_count} />
             </p>
             {metaLine && (
               <p className="text-xs leading-relaxed text-[var(--accent)]/90">{metaLine}</p>

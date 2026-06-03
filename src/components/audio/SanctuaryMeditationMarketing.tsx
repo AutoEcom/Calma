@@ -9,7 +9,7 @@ import {
 import { formatEurFromCents } from '../../lib/formatPrice'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
-import { formatPlayCount, resolvePlayCount } from '../../lib/playCount'
+import { PlayCountStat } from './PlayCountStat'
 import type { ClassDetails } from '../../lib/classTypes'
 import type { SanctuaryBundleOffer } from '../../lib/sanctuaryBundles'
 import { GuestPlayGateModal } from './GuestPlayGateModal'
@@ -45,7 +45,6 @@ export function SanctuaryMeditationMarketing({
   const cover = sanctuaryCoverUrl(meditation) ?? coverArtUrl(meditation)
   const slug = meditation.slug ?? meditation.id
   const returnPath = `/sanctuary/${slug}`
-  const plays = formatPlayCount(resolvePlayCount(meditation.play_count))
   const comingSoon = meditation.sanctuary_status === 'coming_soon'
   const price = formatEurFromCents(meditation.price_in_cents)
 
@@ -123,12 +122,13 @@ export function SanctuaryMeditationMarketing({
                   {meditation.title}
                 </h1>
                 <p className="mt-2 text-sm text-white/55">Guided by {guide}</p>
+                <div className="mt-3">
+                  <PlayCountStat count={meditation.play_count} variant="prominent" />
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 font-medium text-white backdrop-blur-md">
-                  Plays: {plays}
-                </span>
+                <PlayCountStat count={meditation.play_count} variant="pill" showIcon={false} />
                 <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80 backdrop-blur-md">
                   {meditation.duration_minutes} min
                 </span>
