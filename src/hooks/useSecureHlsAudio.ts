@@ -20,10 +20,12 @@ type Options = {
   classId: string | null
   variant: AudioStreamVariant
   enabled: boolean
+  /** Fires when the browser `play` event runs (audio actually started). */
+  onPlayStart?: () => void
   onEnded?: () => void
 }
 
-export function useSecureHlsAudio({ classId, variant, enabled, onEnded }: Options) {
+export function useSecureHlsAudio({ classId, variant, enabled, onPlayStart, onEnded }: Options) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const hlsRef = useRef<Hls | null>(null)
   const refreshTimerRef = useRef<number | null>(null)
@@ -130,7 +132,10 @@ export function useSecureHlsAudio({ classId, variant, enabled, onEnded }: Option
 
     const onTime = () => setCurrentTime(audio.currentTime)
     const onMeta = () => setDuration(audio.duration || 0)
-    const onPlay = () => setPlaying(true)
+    const onPlay = () => {
+      setPlaying(true)
+      onPlayStart?.()
+    }
     const onPause = () => setPlaying(false)
     const onEnd = () => {
       setPlaying(false)
@@ -152,7 +157,7 @@ export function useSecureHlsAudio({ classId, variant, enabled, onEnded }: Option
       audio.removeEventListener('pause', onPause)
       audio.removeEventListener('ended', onEnd)
     }
-  }, [onEnded])
+  }, [onPlayStart, onEnded])
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current

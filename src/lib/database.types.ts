@@ -453,6 +453,7 @@ export type Database = {
           p_class_id: string
           p_completed?: boolean
           p_duration_seconds?: number
+          p_play_start?: boolean
         }
         Returns: Database["public"]["Tables"]["user_streaks"]["Row"] | null
       }

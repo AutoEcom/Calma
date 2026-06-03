@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { detectSpatialAudioSupport } from '../../lib/audioSpatial'
 import { useSecureHlsAudio } from '../../hooks/useSecureHlsAudio'
-import { supabase } from '../../lib/supabase'
+import { recordAudioListenComplete, recordAudioPlayStart } from '../../lib/recordAudioListen'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import type { ClassDetails } from '../../lib/classTypes'
@@ -41,12 +41,15 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
   const credits = parseAudioCredits(meditation.audio_credits)
   const guide = credits.guide ?? meditation.instructor_name
 
-  const onListenComplete = useCallback(async () => {
-    await supabase.rpc('record_audio_listen', {
-      p_class_id: meditation.id,
-      p_duration_seconds: Math.floor(meditation.duration_minutes * 60),
-      p_completed: true,
-    })
+  const onPlayStarted = useCallback(() => {
+    void recordAudioPlayStart(meditation.id)
+  }, [meditation.id])
+
+  const onListenComplete = useCallback(() => {
+    void recordAudioListenComplete(
+      meditation.id,
+      Math.floor(meditation.duration_minutes * 60),
+    )
   }, [meditation.id, meditation.duration_minutes])
 
   const streamVariant = spatial ? 'atmos' : 'stereo'
@@ -67,7 +70,8 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
     classId: canPlay ? meditation.id : null,
     variant: streamVariant,
     enabled: canPlay,
-    onEnded: () => void onListenComplete(),
+    onPlayStart: onPlayStarted,
+    onEnded: onListenComplete,
   })
 
   useEffect(() => {
