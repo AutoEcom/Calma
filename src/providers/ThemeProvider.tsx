@@ -14,6 +14,7 @@ export function ThemeProvider({ children }: Props) {
       enableColorScheme
       storageKey="calma-theme"
       themes={['light', 'dark', 'system']}
+      disableTransitionOnChange={false}
     >
       {children}
     </NextThemesProvider>

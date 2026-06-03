@@ -10,6 +10,8 @@ import {
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { ThemePreferenceSwitch } from '../components/ThemePreferenceSwitch'
+import { MemberAvatar } from '../components/ui/MemberAvatar'
+import { PasswordInput } from '../components/ui/PasswordInput'
 import { NeonPrimaryButton } from '../components/ui/NeonGlow'
 import { formatEurFromCents } from '../lib/formatPrice'
 import { openStripeCustomerPortal } from '../lib/stripePortal'
@@ -19,6 +21,8 @@ import { calmaHeading, calmaMuted, zenFloat, zenInput, zenPanel } from '../lib/d
 import { cn } from '../lib/utils'
 
 type TabId = 'personal' | 'preferences' | 'security' | 'billing'
+
+const PROFILE_TABS: TabId[] = ['personal', 'preferences', 'security', 'billing']
 
 type TxRow = {
   id: string
@@ -67,6 +71,11 @@ export function ProfilePage() {
     if (searchParams.get('recovery') === '1') {
       setTab('security')
       setRecoveryHint(true)
+      return
+    }
+    const fromUrl = searchParams.get('tab')
+    if (fromUrl && PROFILE_TABS.includes(fromUrl as TabId)) {
+      setTab(fromUrl as TabId)
     }
   }, [searchParams])
 
@@ -232,7 +241,7 @@ export function ProfilePage() {
                   'flex shrink-0 items-center gap-2 rounded-xl px-4 py-3 text-left text-sm font-medium transition',
                   tab === t.id
                     ? 'bg-[var(--accent)]/15 text-[var(--accent)]'
-                    : 'text-slate-600 hover:bg-white/50 dark:text-neutral-400 dark:hover:bg-white/[0.04]',
+                    : 'text-slate-800 hover:bg-white/50 dark:text-neutral-400 dark:hover:bg-white/[0.04]',
                 )}
               >
                 <t.icon className="h-4 w-4 shrink-0" />
@@ -261,17 +270,12 @@ export function ProfilePage() {
             <form onSubmit={saveProfile} className="space-y-6">
               <h2 className={cn('text-lg font-semibold', calmaHeading)}>Personal info</h2>
               <div className="flex flex-wrap items-center gap-6">
-                {member?.avatar_url ? (
-                  <img
-                    src={member.avatar_url}
-                    alt=""
-                    className="h-24 w-24 rounded-2xl object-cover shadow-md ring-1 ring-slate-200/60 dark:ring-white/[0.06]"
-                  />
-                ) : (
-                  <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-[var(--page-bg)] text-[var(--text-muted)]">
-                    No photo
-                  </div>
-                )}
+                <MemberAvatar
+                  src={member?.avatar_url}
+                  size="lg"
+                  className="rounded-2xl shadow-md"
+                  ringClassName="ring-1 ring-slate-200/60 dark:ring-white/[0.06]"
+                />
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm shadow-sm ring-1 ring-slate-200/60 hover:ring-[var(--accent)]/35 dark:bg-neutral-900/50 dark:ring-white/[0.06]">
                   <Upload className="h-4 w-4" />
                   {avatarUploading ? 'Uploading…' : 'Change photo'}
@@ -346,22 +350,22 @@ export function ProfilePage() {
               </p>
               <label className="block text-sm">
                 <span className="text-[var(--text-muted)]">New password</span>
-                <input
-                  type="password"
+                <PasswordInput
                   autoComplete="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className={cn('mt-1 w-full', zenInput)}
+                  className="mt-1"
+                  inputClassName={zenInput}
                 />
               </label>
               <label className="block text-sm">
                 <span className="text-[var(--text-muted)]">Confirm password</span>
-                <input
-                  type="password"
+                <PasswordInput
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={cn('mt-1 w-full', zenInput)}
+                  className="mt-1"
+                  inputClassName={zenInput}
                 />
               </label>
               {pwdErr && <p className="text-sm text-red-400">{pwdErr}</p>}

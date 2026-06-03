@@ -3,7 +3,10 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { AuthFormDivider } from '../components/auth/AuthFormDivider'
 import { OAuthButtons } from '../components/auth/OAuthButtons'
 import { passwordResetRedirectUrl } from '../lib/authRedirect'
+import { PasswordInput } from '../components/ui/PasswordInput'
+import { zenCard } from '../lib/designSystem'
 import { supabase } from '../lib/supabase'
+import { cn } from '../lib/utils'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -69,7 +72,7 @@ export function LoginPage() {
       {forgotMode ? (
         <form
           onSubmit={onForgotPassword}
-          className="space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6"
+          className={cn('space-y-4 p-6', zenCard)}
         >
           <label className="block text-sm">
             <span className="text-[var(--text-muted)]">Email</span>
@@ -112,7 +115,7 @@ export function LoginPage() {
         <>
           <form
             onSubmit={onSubmit}
-            className="space-y-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6"
+            className={cn('space-y-4 p-6', zenCard)}
           >
             <label className="block text-sm">
               <span className="text-[var(--text-muted)]">Email</span>
@@ -139,13 +142,13 @@ export function LoginPage() {
                   Forgot password?
                 </button>
               </div>
-              <input
-                type="password"
+              <PasswordInput
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--page-bg)] px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--accent)]"
+                className="mt-1"
+                inputClassName="rounded-xl border border-[var(--border)] bg-[var(--page-bg)] px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--accent)]"
               />
             </label>
             {error && <p className="text-sm text-red-400">{error}</p>}

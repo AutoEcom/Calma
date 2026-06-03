@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
   --color-calma-bg: #050608;
@@ -14,11 +16,11 @@
 /* next-themes applies .light / .dark on <html> */
 :root {
   color-scheme: light dark;
-  --page-bg: #f8fafc;
+  --page-bg: #fafaf9;
   --surface: #ffffff;
   --border: #e8edf3;
   --text: #0f172a;
-  --text-muted: #475569;
+  --text-muted: #334155;
   --accent: #2dd4bf;
   --accent-warm: #ca8a04;
   --on-accent: #0f172a;
@@ -39,11 +41,11 @@
 .light {
   color-scheme: light;
   /* Stone / milk white luxury palette */
-  --page-bg: #f8fafc;
+  --page-bg: #fafaf9;
   --surface: #ffffff;
   --border: #e8edf3;
   --text: #0f172a;
-  --text-muted: #475569;
+  --text-muted: #334155;
   --accent: #2dd4bf;
   --accent-warm: #ca8a04;
   --on-accent: #0f172a;
