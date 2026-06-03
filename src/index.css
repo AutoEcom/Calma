@@ -1,0 +1,207 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  --color-calma-bg: #050608;
+  --color-calma-surface: #0c0f14;
+  --color-calma-border: #1a2230;
+  --color-calma-teal: #2dd4bf;
+  --color-calma-teal-dim: #14b8a6;
+  --color-calma-amber: #f59e0b;
+  --color-calma-muted: #94a3b8;
+}
+
+/* next-themes: default dark; .light overrides */
+:root,
+.dark {
+  color-scheme: dark;
+  --page-bg: #000000;
+  --surface: var(--color-calma-surface);
+  --border: var(--color-calma-border);
+  --text: rgba(229, 231, 235, 0.9);
+  --text-muted: #94a3b8;
+  --accent: #2dd4bf;
+  --accent-warm: #facc15;
+  --on-accent: #042f2e;
+}
+
+.light {
+  color-scheme: light;
+  /* Stone / milk white luxury palette */
+  --page-bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e8edf3;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2dd4bf;
+  --accent-warm: #ca8a04;
+  --on-accent: #0f172a;
+}
+
+.light h1,
+.light h2,
+.light h3 {
+  color: #0f172a;
+}
+
+/* Pitch-black premium sections ignore global light heading overrides */
+.light .calma-premium-dark {
+  color: #cbd5e1;
+  color-scheme: dark;
+}
+
+.light .calma-premium-dark h1,
+.light .calma-premium-dark h2,
+.light .calma-premium-dark h3,
+.light .calma-premium-dark h4 {
+  color: #f8fafc;
+}
+
+.light .calma-premium-dark .text-premium-muted {
+  color: #94a3b8;
+}
+
+.light .calma-premium-dark .text-premium-body {
+  color: #cbd5e1;
+}
+
+html {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* —— Cosmic ambient (dark: starfield · light: soft veil) —— */
+.cosmic-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cosmic-nebula {
+  position: absolute;
+  inset: -20%;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 10%, rgba(45, 212, 191, 0.06), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 85% 75%, rgba(94, 234, 212, 0.04), transparent 50%);
+  transition: opacity 0.5s ease;
+}
+
+.dark .cosmic-nebula {
+  opacity: 1;
+}
+
+.light .cosmic-nebula {
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 70% 45% at 20% 0%, rgba(45, 212, 191, 0.04), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 90% 100%, rgba(148, 163, 184, 0.06), transparent 50%);
+}
+
+.cosmic-stars {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.dark .cosmic-stars {
+  opacity: 1;
+}
+
+/* Small stars — 1px, fast twinkle */
+.cosmic-stars-small {
+  background-image:
+    radial-gradient(1px 1px at 8% 14%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 22% 68%, rgba(255, 255, 255, 0.28), transparent),
+    radial-gradient(1px 1px at 38% 28%, rgba(255, 255, 255, 0.32), transparent),
+    radial-gradient(1px 1px at 54% 82%, rgba(255, 255, 255, 0.26), transparent),
+    radial-gradient(1px 1px at 67% 12%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 81% 44%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1px 1px at 93% 76%, rgba(255, 255, 255, 0.28), transparent),
+    radial-gradient(1px 1px at 15% 91%, rgba(255, 255, 255, 0.22), transparent);
+  background-size: 280px 260px;
+  animation: cosmic-twinkle-fast 4s ease-in-out infinite;
+}
+
+/* Medium stars — 2px, slow ambient pulse */
+.cosmic-stars-medium {
+  background-image:
+    radial-gradient(2px 2px at 18% 36%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(2px 2px at 42% 58%, rgba(255, 255, 255, 0.48), transparent),
+    radial-gradient(2px 2px at 58% 18%, rgba(255, 255, 255, 0.52), transparent),
+    radial-gradient(2px 2px at 74% 72%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(2px 2px at 88% 32%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(2px 2px at 6% 52%, rgba(255, 255, 255, 0.42), transparent);
+  background-size: 480px 420px;
+  animation: cosmic-pulse-slow 11s ease-in-out infinite 0.8s;
+}
+
+/* Large constellation anchors — 3px, steady glow */
+.cosmic-stars-large {
+  background-image:
+    radial-gradient(3px 3px at 24% 22%, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(3px 3px at 48% 48%, rgba(200, 230, 255, 0.65), transparent),
+    radial-gradient(3px 3px at 72% 28%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(3px 3px at 12% 64%, rgba(180, 220, 255, 0.6), transparent),
+    radial-gradient(3px 3px at 86% 68%, rgba(255, 255, 255, 0.68), transparent);
+  background-size: 640px 560px;
+  opacity: 0.8;
+  animation: cosmic-anchor-glow 16s ease-in-out infinite;
+}
+
+@keyframes cosmic-twinkle-fast {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes cosmic-pulse-slow {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+@keyframes cosmic-anchor-glow {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 0.88;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-stars-small,
+  .cosmic-stars-medium,
+  .cosmic-stars-large {
+    animation: none;
+    opacity: 0.4;
+  }
+}
