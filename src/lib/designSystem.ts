@@ -4,7 +4,7 @@ export const calmaPage =
 
 export const calmaHeading = 'text-slate-900 dark:text-neutral-100'
 
-export const calmaMuted = 'text-slate-600 dark:text-neutral-400'
+export const calmaMuted = 'text-slate-700 dark:text-neutral-400'
 
 export const zenFloat =
   'rounded-2xl bg-white/70 shadow-[0_12px_40px_-16px_rgba(15,23,42,0.1)] backdrop-blur-md dark:bg-neutral-900/40 dark:shadow-[0_12px_40px_-16px_rgba(0,0,0,0.5)]'

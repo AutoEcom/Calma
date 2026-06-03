@@ -16,10 +16,7 @@ import { supabase } from '../../lib/supabase'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import type { ClassDetails } from '../../lib/classTypes'
-import { SanctuarySalesGate } from './SanctuarySalesGate'
-import type { SanctuaryBundleOffer } from '../../lib/sanctuaryBundles'
 import { PlayerBreathVisualizer } from './PlayerBreathVisualizer'
-import { useAuth } from '../../providers/AuthProvider'
 import { cn } from '../../lib/utils'
 
 function formatTime(sec: number): string {
@@ -31,31 +28,26 @@ function formatTime(sec: number): string {
 
 type Props = {
   meditation: ClassDetails
-  hasAccess: boolean
-  bundleOffer?: SanctuaryBundleOffer | null
 }
 
-export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null }: Props) {
-  const { user } = useAuth()
+export function AudioSanctuaryPlayer({ meditation }: Props) {
   const [spatial, setSpatial] = useState(false)
   const [spatialChecked, setSpatialChecked] = useState(false)
   const [volume, setVolume] = useState(0.85)
   const cover = sanctuaryCoverUrl(meditation)
 
-  const canPlay =
-    hasAccess && meditation.sanctuary_status === 'active' && !!user
+  const canPlay = meditation.sanctuary_status === 'active'
 
   const credits = parseAudioCredits(meditation.audio_credits)
   const guide = credits.guide ?? meditation.instructor_name
 
   const onListenComplete = useCallback(async () => {
-    if (!user?.id) return
     await supabase.rpc('record_audio_listen', {
       p_class_id: meditation.id,
       p_duration_seconds: Math.floor(meditation.duration_minutes * 60),
       p_completed: true,
     })
-  }, [user?.id, meditation.id, meditation.duration_minutes])
+  }, [meditation.id, meditation.duration_minutes])
 
   const streamVariant = spatial ? 'atmos' : 'stereo'
   const spatialBadge = spatial ? 'Dolby Atmos Active' : 'Studio Master Stereo'
@@ -123,30 +115,9 @@ export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null
 
   const progress = duration > 0 ? currentTime / duration : 0
 
-  if (!user) {
-    const returnPath = `/sanctuary/${meditation.slug ?? meditation.id}`
-    return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black text-center">
-        <PlayerBreathVisualizer playing={false} size={160} />
-        <p className="text-white/60">Sign in to unlock this sanctuary session.</p>
-        <Link
-          to="/login"
-          state={{ from: returnPath }}
-          className="rounded-full border border-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-[var(--accent)]"
-        >
-          Sign in
-        </Link>
-      </div>
-    )
-  }
-
-  if (!hasAccess) {
-    return <SanctuarySalesGate meditation={meditation} bundleOffer={bundleOffer} />
-  }
-
   if (meditation.sanctuary_status === 'coming_soon') {
     return (
-      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 bg-black text-center">
+      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 rounded-3xl bg-black text-center">
         <PlayerBreathVisualizer playing={false} size={160} />
         <h1 className="text-xl font-light tracking-wide text-white">{meditation.title}</h1>
         <p className="text-sm text-white/50">Coming soon to the Audio Sanctuary.</p>
@@ -161,7 +132,6 @@ export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null
     <div className="calma-premium-dark fixed inset-0 z-50 flex flex-col overflow-hidden bg-black">
       <audio ref={audioRef} className="sr-only" playsInline />
 
-      {/* Ambient cover glow */}
       {cover && (
         <motion.div
           className="pointer-events-none absolute inset-0"
@@ -210,7 +180,6 @@ export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null
             )}
           </div>
 
-          {/* Floating glass console */}
           <div
             className={cn(
               'mt-10 w-full max-w-md rounded-3xl border border-white/10 p-5',
@@ -233,11 +202,11 @@ export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null
               aria-valuenow={Math.round(progress * 100)}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-r from-[#2DD4BF] to-[#5eead4] shadow-[0_0_16px_rgba(45,212,191,0.7)]"
+                className="h-full rounded-full bg-gradient-to-r from-[#2DD4BF] to-[#5eead4]"
                 style={{ width: `${progress * 100}%` }}
               />
             </div>
-            <div className="mb-5 flex justify-between text-[11px] tabular-nums tracking-wide text-white/40">
+            <div className="mb-5 flex justify-between text-[11px] tabular-nums text-white/40">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
@@ -260,8 +229,7 @@ export function AudioSanctuaryPlayer({ meditation, hasAccess, bundleOffer = null
                 className={cn(
                   'relative flex h-[72px] w-[72px] items-center justify-center rounded-full',
                   'border-2 border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]',
-                  'shadow-[0_0_40px_rgba(45,212,191,0.45),0_0_80px_rgba(45,212,191,0.15)]',
-                  'transition hover:scale-105 hover:bg-[#2DD4BF]/20 disabled:opacity-50',
+                  'shadow-[0_0_40px_rgba(45,212,191,0.45)] transition hover:scale-105 disabled:opacity-50',
                 )}
                 aria-label={playing ? 'Pause' : 'Play'}
               >

@@ -40,6 +40,7 @@ import {
   type AudioSanctuaryStatus,
 } from '../lib/audioSanctuary'
 import { createMuxStreamForClass } from '../lib/muxStream'
+import { deleteClassPermanently } from '../lib/adminDeleteClass'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
@@ -137,6 +138,7 @@ export function AdminClassesPage() {
   const [dragActive, setDragActive] = useState(false)
 
   const [saving, setSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const effectiveId = editingId ?? draftId
@@ -297,6 +299,30 @@ export function AdminClassesPage() {
 
   function updatePoint(i: number, v: string) {
     setPoints((p) => p.map((x, idx) => (idx === i ? v : x)))
+  }
+
+  async function handleDeleteClass(row: ClassDetails) {
+    const kind = row.is_audio_sanctuary ? 'meditation' : 'session'
+    if (
+      !window.confirm(
+        `Permanently delete this ${kind} “${row.title}”? Database row and storage assets will be removed.`,
+      )
+    ) {
+      return
+    }
+    setDeletingId(row.id)
+    setError(null)
+    const { error: delErr } = await deleteClassPermanently(row)
+    setDeletingId(null)
+    if (delErr) {
+      setError(delErr)
+      return
+    }
+    if (editingId === row.id) {
+      if (row.is_audio_sanctuary) startNewMeditation()
+      else startNewLiveClass()
+    }
+    await loadList()
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -516,17 +542,20 @@ export function AdminClassesPage() {
               </p>
             ) : (
               classesList.map((c) => (
-                <button
+                <div
                   key={c.id}
-                  type="button"
-                  onClick={() => openEdit(c)}
                   className={cn(
-                    'flex w-full flex-col gap-1 rounded-xl border px-3 py-3 text-left transition',
+                    'relative flex w-full rounded-xl border transition',
                     editingId === c.id
                       ? 'border-[var(--accent)] bg-[var(--accent)]/10'
                       : 'border-transparent bg-[var(--page-bg)]/50 hover:border-[var(--border)]',
                   )}
                 >
+                  <button
+                    type="button"
+                    onClick={() => openEdit(c)}
+                    className="flex min-w-0 flex-1 flex-col gap-1 px-3 py-3 pr-10 text-left"
+                  >
                   <span className="line-clamp-2 text-sm font-medium text-[var(--text)]">
                     {c.title}
                   </span>
@@ -563,7 +592,21 @@ export function AdminClassesPage() {
                       You created
                     </span>
                   )}
-                </button>
+                  </button>
+                  <button
+                    type="button"
+                    title={`Delete ${c.is_audio_sanctuary ? 'meditation' : 'session'}`}
+                    disabled={deletingId === c.id}
+                    onClick={() => void handleDeleteClass(c)}
+                    className="absolute right-2 top-2 rounded-lg p-1.5 text-[var(--text-muted)] transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-40"
+                  >
+                    {deletingId === c.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               ))
             )}
           </div>

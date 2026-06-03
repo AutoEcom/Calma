@@ -54,6 +54,7 @@ export function ProfilePage() {
   const [transactions, setTransactions] = useState<TxRow[]>([])
   const [txLoading, setTxLoading] = useState(true)
   const [portalLoading, setPortalLoading] = useState(false)
+  const [portalError, setPortalError] = useState<string | null>(null)
 
   useEffect(() => {
     if (member) {
@@ -182,11 +183,12 @@ export function ProfilePage() {
   }
 
   async function openPortal() {
+    setPortalError(null)
     setPortalLoading(true)
     const { url, error } = await openStripeCustomerPortal()
     setPortalLoading(false)
     if (error) {
-      setProfileErr(error)
+      setPortalError(error)
       return
     }
     if (url) window.location.assign(url)
@@ -393,9 +395,12 @@ export function ProfilePage() {
                     Opening Stripe…
                   </>
                 ) : (
-                  'Manage payment methods'
+                  'Manage payment methods and invoices'
                 )}
               </NeonPrimaryButton>
+              {portalError && (
+                <p className="text-sm text-red-400">{portalError}</p>
+              )}
 
               <div>
                 <h3 className={cn('text-sm font-medium', calmaHeading)}>Transaction history</h3>

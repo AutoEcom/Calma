@@ -11,15 +11,26 @@
   --color-calma-muted: #94a3b8;
 }
 
-/* next-themes: default dark; .light overrides */
-:root,
+/* next-themes applies .light / .dark on <html> */
+:root {
+  color-scheme: light dark;
+  --page-bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e8edf3;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --accent: #2dd4bf;
+  --accent-warm: #ca8a04;
+  --on-accent: #0f172a;
+}
+
 .dark {
   color-scheme: dark;
   --page-bg: #000000;
   --surface: var(--color-calma-surface);
   --border: var(--color-calma-border);
   --text: rgba(229, 231, 235, 0.9);
-  --text-muted: #94a3b8;
+  --text-muted: #a3a3a3;
   --accent: #2dd4bf;
   --accent-warm: #facc15;
   --on-accent: #042f2e;
@@ -32,7 +43,7 @@
   --surface: #ffffff;
   --border: #e8edf3;
   --text: #0f172a;
-  --text-muted: #64748b;
+  --text-muted: #475569;
   --accent: #2dd4bf;
   --accent-warm: #ca8a04;
   --on-accent: #0f172a;

@@ -46,7 +46,7 @@ export const CATEGORY_BLURBS: Record<AudioSanctuaryCategory, string> = {
 
 /** Public catalog fields — never selects private R2 keys. */
 export const AUDIO_SANCTUARY_SELECT =
-  'id, slug, title, description, instructor_name, instructor_avatar_url, duration_minutes, price_in_cents, price_in_calma, image_url, audio_cover_art_url, is_audio_sanctuary, is_featured, audio_sanctuary_category, audio_credits, sanctuary_status, badge, usage_tip, scheduled_at, created_at'
+  'id, slug, title, description, instructor_name, instructor_avatar_url, duration_minutes, price_in_cents, price_in_calma, image_url, audio_cover_art_url, is_audio_sanctuary, is_featured, audio_sanctuary_category, audio_credits, sanctuary_status, badge, usage_tip, play_count, scheduled_at, created_at'
 
 export function parseAudioCredits(raw: unknown): AudioCredits {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {}

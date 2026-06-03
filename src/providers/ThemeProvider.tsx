@@ -11,6 +11,7 @@ export function ThemeProvider({ children }: Props) {
       attribute="class"
       defaultTheme="system"
       enableSystem
+      enableColorScheme
       storageKey="calma-theme"
       themes={['light', 'dark', 'system']}
     >

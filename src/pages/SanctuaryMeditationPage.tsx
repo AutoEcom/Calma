@@ -2,6 +2,8 @@ import { Loader2, PartyPopper } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { AudioSanctuaryPlayer } from '../components/audio/AudioSanctuaryPlayer'
+import { SanctuaryMeditationMarketing } from '../components/audio/SanctuaryMeditationMarketing'
+import { SanctuarySalesGate } from '../components/audio/SanctuarySalesGate'
 import { CLASS_PUBLIC_SELECT } from '../lib/classSelect'
 import { memberHasAudioAccess } from '../lib/audioAccess'
 import { isGuidedMeditation } from '../lib/classKind'
@@ -129,9 +131,9 @@ export function SanctuaryMeditationPage() {
     }
   }, [paymentSync, user?.id, meditation?.id, refreshAccess, searchParams, setSearchParams])
 
-  if (authLoading || meditation === undefined) {
+  if (meditation === undefined || authLoading) {
     return (
-      <div className="-mx-4 -my-8 flex min-h-[60vh] items-center justify-center bg-black md:-mx-0">
+      <div className="-mx-4 -my-8 flex min-h-[60vh] items-center justify-center md:-mx-0">
         <Loader2 className="h-10 w-10 animate-spin text-[var(--accent)]" />
       </div>
     )
@@ -145,8 +147,10 @@ export function SanctuaryMeditationPage() {
     return <Navigate to={`/class/${meditation.slug ?? meditation.id}`} replace />
   }
 
+  const showPlayer = user && hasAccess && meditation.sanctuary_status === 'active'
+
   return (
-    <div className="-mx-4 -my-8 md:-mx-0">
+    <div className="-mx-4 -my-8 w-full min-w-0 md:-mx-0">
       {accessConfirmed && (
         <div
           className="fixed left-1/2 top-20 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--accent)]/50 bg-black/90 px-4 py-2 text-sm text-[var(--accent)] shadow-[0_0_24px_rgba(45,212,191,0.35)]"
@@ -164,11 +168,14 @@ export function SanctuaryMeditationPage() {
           </div>
         </div>
       )}
-      <AudioSanctuaryPlayer
-        meditation={meditation}
-        hasAccess={hasAccess}
-        bundleOffer={bundleOffer}
-      />
+
+      {showPlayer ? (
+        <AudioSanctuaryPlayer meditation={meditation} />
+      ) : user && !hasAccess ? (
+        <SanctuarySalesGate meditation={meditation} bundleOffer={bundleOffer} />
+      ) : (
+        <SanctuaryMeditationMarketing meditation={meditation} bundleOffer={bundleOffer} />
+      )}
     </div>
   )
 }

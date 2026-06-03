@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
+import { ScrollToTop } from './components/layout/ScrollToTop'
 import { AdminClassesPage } from './pages/AdminClassesPage'
 import { AdminSessionsPlaceholder } from './pages/AdminSessionsPlaceholder'
 import { ClassLivePage } from './pages/ClassLivePage'
@@ -20,6 +21,7 @@ import { TermsPage } from './pages/TermsPage'
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<AppLayout />}>
           <Route index element={<HomePage />} />

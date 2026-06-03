@@ -152,6 +152,7 @@ export type Database = {
           mux_recording_playback_id: string | null
           mux_status: string
           mux_stream_key: string | null
+          play_count: number
           price_in_calma: number
           price_in_cents: number
           sanctuary_status: Database["public"]["Enums"]["audio_sanctuary_status"] | null
