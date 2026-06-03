@@ -1,14 +1,15 @@
--- Public display play counter for sanctuary marketing pages
+-- Marketing listen counter: admins set an initial value; real plays increment via trigger.
 alter table public.classes
   add column if not exists play_count integer not null default 0;
 
 comment on column public.classes.play_count is
-  'Aggregated listen counter surfaced on public sanctuary pages.';
+  'Public display listen count. Set explicitly when creating or editing a class; increments +1 on each completed audio listen.';
 
--- Seed existing rows with stable marketing-scale counts
-update public.classes
-set play_count = 80000 + (abs(hashtext(id::text)) % 160000)
-where play_count = 0;
+alter table public.classes
+  drop constraint if exists classes_play_count_nonneg;
+
+alter table public.classes
+  add constraint classes_play_count_nonneg check (play_count >= 0);
 
 create or replace function public.bump_class_play_count()
 returns trigger

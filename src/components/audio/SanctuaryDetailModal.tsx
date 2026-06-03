@@ -23,7 +23,7 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
   const credits = parseAudioCredits(row.audio_credits)
   const guide = credits.guide ?? row.instructor_name
   const comingSoon = row.sanctuary_status === 'coming_soon'
-  const plays = formatPlayCount(resolvePlayCount(row.play_count, row.id))
+  const plays = formatPlayCount(resolvePlayCount(row.play_count))
   const category =
     row.audio_sanctuary_category &&
     CATEGORY_LABELS[row.audio_sanctuary_category as AudioSanctuaryCategory]

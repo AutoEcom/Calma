@@ -31,7 +31,7 @@ export function SanctuaryCatalogCard({ row, index, hasAccess }: Props) {
   const guide = credits.guide ?? row.instructor_name
   const frequency = credits.frequency
   const comingSoon = row.sanctuary_status === 'coming_soon'
-  const plays = formatPlayCount(resolvePlayCount(row.play_count, row.id))
+  const plays = formatPlayCount(resolvePlayCount(row.play_count))
 
   return (
     <>

@@ -45,7 +45,7 @@ export function SanctuaryMeditationMarketing({
   const cover = sanctuaryCoverUrl(meditation) ?? coverArtUrl(meditation)
   const slug = meditation.slug ?? meditation.id
   const returnPath = `/sanctuary/${slug}`
-  const plays = formatPlayCount(resolvePlayCount(meditation.play_count, meditation.id))
+  const plays = formatPlayCount(resolvePlayCount(meditation.play_count))
   const comingSoon = meditation.sanctuary_status === 'coming_soon'
   const price = formatEurFromCents(meditation.price_in_cents)
 

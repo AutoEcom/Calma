@@ -41,6 +41,7 @@ import {
 } from '../lib/audioSanctuary'
 import { createMuxStreamForClass } from '../lib/muxStream'
 import { deleteClassPermanently } from '../lib/adminDeleteClass'
+import { formatPlayCount, parseDisplayPlayCountInput } from '../lib/playCount'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
@@ -95,6 +96,7 @@ export function AdminClassesPage() {
   const [isFeatured, setIsFeatured] = useState(false)
   const [customSlug, setCustomSlug] = useState('')
   const [priceEuros, setPriceEuros] = useState('25')
+  const [displayPlays, setDisplayPlays] = useState('')
   const [videoUrl, setVideoUrl] = useState('')
   const [muxPlaybackId, setMuxPlaybackId] = useState<string | null>(null)
   const [muxStreamKey, setMuxStreamKey] = useState<string | null>(null)
@@ -177,6 +179,7 @@ export function AdminClassesPage() {
     setIsFeatured(false)
     setCustomSlug('')
     setPriceEuros('25')
+    setDisplayPlays('')
     setVideoUrl('')
     setMuxPlaybackId(null)
     setMuxStreamKey(null)
@@ -201,6 +204,7 @@ export function AdminClassesPage() {
     setIsFeatured(Boolean(row.is_featured))
     setCustomSlug(row.slug ?? '')
     setPriceEuros((row.price_in_cents / 100).toFixed(2))
+    setDisplayPlays(String(row.play_count ?? 0))
     setVideoUrl(row.video_url ?? '')
     setMuxPlaybackId(row.mux_playback_id ?? null)
     setMuxStreamKey(row.mux_stream_key ?? null)
@@ -371,6 +375,12 @@ export function AdminClassesPage() {
     const cleanedPoints = points.map((s) => s.trim()).filter(Boolean)
     const price_in_cents = Math.round(euros * 100)
 
+    const parsedPlays = parseDisplayPlayCountInput(displayPlays)
+    if (parsedPlays.error) {
+      setError(parsedPlays.error)
+      return
+    }
+
     setSaving(true)
 
     const audioCredits: Record<string, string> = {}
@@ -392,6 +402,7 @@ export function AdminClassesPage() {
       ...slugPatch,
       price_in_cents,
       price_in_calma: 0,
+      play_count: parsedPlays.value,
       video_url: isMeditationMode ? null : videoUrl.trim() || null,
       image_url: imagePublicUrl,
       audio_cover_art_url: isMeditationMode ? imagePublicUrl : null,
@@ -856,6 +867,32 @@ export function AdminClassesPage() {
                     onChange={(e) => setPriceEuros(e.target.value)}
                     className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--page-bg)] px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)]"
                   />
+                </label>
+                <label className="block text-sm sm:col-span-2">
+                  <span className="text-[var(--text-muted)]">Display plays (initial)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    inputMode="numeric"
+                    value={displayPlays}
+                    onChange={(e) => setDisplayPlays(e.target.value)}
+                    placeholder="e.g. 134400 for Plays: 134.4k"
+                    className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--page-bg)] px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)]"
+                  />
+                  <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+                    Public listen counter on sanctuary pages. Each completed audio play adds +1
+                    {displayPlays.trim() !== '' && !parseDisplayPlayCountInput(displayPlays).error ? (
+                      <>
+                        {' '}
+                        · preview:{' '}
+                        <span className="font-medium text-[var(--text)]">
+                          Plays: {formatPlayCount(parseDisplayPlayCountInput(displayPlays).value)}
+                        </span>
+                      </>
+                    ) : null}
+                    .
+                  </p>
                 </label>
               </div>
             </section>
