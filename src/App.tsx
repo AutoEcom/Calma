@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './components/layout/AppLayout'
 import { ScrollToTop } from './components/layout/ScrollToTop'
+import { AdminBundlesPage } from './pages/AdminBundlesPage'
 import { AdminClassesPage } from './pages/AdminClassesPage'
 import { AdminSessionsPlaceholder } from './pages/AdminSessionsPlaceholder'
 import { ClassLivePage } from './pages/ClassLivePage'
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="class/:slug/live" element={<ClassLivePage />} />
           <Route path="class/:slug" element={<ClassPage />} />
           <Route path="admin/classes" element={<AdminClassesPage />} />
+          <Route path="admin/bundles" element={<AdminBundlesPage />} />
           <Route path="admin/sessions" element={<AdminSessionsPlaceholder />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

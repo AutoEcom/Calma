@@ -28,10 +28,12 @@ import {
   type SessionLevelValue,
   type SessionTypeValue,
 } from '../components/class/ClassBadges'
+import { AdminTabNav } from '../components/admin/AdminTabNav'
 import {
   AudioSanctuaryAdminSettings,
   type AudioSanctuaryFormState,
 } from '../components/admin/AudioSanctuaryAdminSettings'
+import { BundleAssignmentField } from '../components/admin/BundleAssignmentField'
 import { MuxStreamSettings } from '../components/admin/MuxStreamSettings'
 import {
   CATEGORY_LABELS,
@@ -40,6 +42,12 @@ import {
   type AudioSanctuaryStatus,
 } from '../lib/audioSanctuary'
 import { createMuxStreamForClass } from '../lib/muxStream'
+import {
+  fetchAdminBundles,
+  fetchBundleIdsForClass,
+  syncClassBundleAssignments,
+  type AdminBundleRow,
+} from '../lib/adminBundles'
 import { deleteClassPermanently } from '../lib/adminDeleteClass'
 import { formatPlayCount, parseDisplayPlayCountInput } from '../lib/playCount'
 
@@ -106,6 +114,10 @@ export function AdminClassesPage() {
   const [sessionType, setSessionType] = useState<SessionTypeValue>('yoga')
   const [sessionLevel, setSessionLevel] = useState<SessionLevelValue>('all')
   const [audioForm, setAudioForm] = useState<AudioSanctuaryFormState>(defaultAudioFormState)
+  const [adminBundles, setAdminBundles] = useState<AdminBundleRow[]>([])
+  const [bundlesCatalogLoading, setBundlesCatalogLoading] = useState(false)
+  const [selectedBundleIds, setSelectedBundleIds] = useState<string[]>([])
+  const [bundleLinksLoading, setBundleLinksLoading] = useState(false)
 
   const isMeditationMode = sessionType === GUIDED_MEDITATION_TYPE
 
@@ -162,6 +174,21 @@ export function AdminClassesPage() {
   }, [loadList])
 
   useEffect(() => {
+    if (!isMeditationMode) return
+    let cancelled = false
+    setBundlesCatalogLoading(true)
+    void fetchAdminBundles().then((list) => {
+      if (!cancelled) {
+        setAdminBundles(list)
+        setBundlesCatalogLoading(false)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [isMeditationMode])
+
+  useEffect(() => {
     if (!defaultInstructor) return
     if (editingId === null) {
       setInstructorName((prev) => (prev.trim() === '' ? defaultInstructor : prev))
@@ -189,6 +216,7 @@ export function AdminClassesPage() {
     setSessionType('yoga')
     setSessionLevel('all')
     setAudioForm(defaultAudioFormState())
+    setSelectedBundleIds([])
     setImagePublicUrl(null)
     setImageError(null)
     setError(null)
@@ -252,6 +280,16 @@ export function AdminClassesPage() {
     )
     setImageError(null)
     setError(null)
+
+    if (row.is_audio_sanctuary || row.session_type === GUIDED_MEDITATION_TYPE) {
+      setBundleLinksLoading(true)
+      void fetchBundleIdsForClass(row.id).then((ids) => {
+        setSelectedBundleIds(ids)
+        setBundleLinksLoading(false)
+      })
+    } else {
+      setSelectedBundleIds([])
+    }
   }
 
   async function uploadCoverFile(file: File) {
@@ -443,6 +481,20 @@ export function AdminClassesPage() {
       }
     }
 
+    if (isMeditationMode) {
+      const { error: bundleErr } = await syncClassBundleAssignments(
+        savedClassId,
+        selectedBundleIds,
+      )
+      if (bundleErr) {
+        setSaving(false)
+        setError(`Class saved, but bundle links failed: ${bundleErr}`)
+        await loadList()
+        setEditingId(savedClassId)
+        return
+      }
+    }
+
     if (!isMeditationMode && !editingId && !muxPlaybackId) {
       const { data: mux, error: muxErr } = await createMuxStreamForClass(savedClassId)
       if (muxErr) {
@@ -537,6 +589,8 @@ export function AdminClassesPage() {
           </div>
         </div>
       </header>
+
+      <AdminTabNav />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,280px)_1fr]">
         <aside className="space-y-3">
@@ -970,11 +1024,19 @@ export function AdminClassesPage() {
             </section>
 
             {isMeditationMode ? (
-              <AudioSanctuaryAdminSettings
-                title={title}
-                state={audioForm}
-                onChange={(patch) => setAudioForm((prev) => ({ ...prev, ...patch }))}
-              />
+              <>
+                <AudioSanctuaryAdminSettings
+                  title={title}
+                  state={audioForm}
+                  onChange={(patch) => setAudioForm((prev) => ({ ...prev, ...patch }))}
+                />
+                <BundleAssignmentField
+                  bundles={adminBundles}
+                  selectedIds={selectedBundleIds}
+                  onChange={setSelectedBundleIds}
+                  loading={bundlesCatalogLoading || bundleLinksLoading}
+                />
+              </>
             ) : (
               <>
                 <MuxStreamSettings
