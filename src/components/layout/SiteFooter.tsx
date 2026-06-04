@@ -1,37 +1,51 @@
 import { Link } from 'react-router-dom'
 import { CalmaLogo } from './CalmaLogo'
+import { FooterPaymentBadges } from './FooterPaymentBadges'
+import { FooterSocialLinks } from './FooterSocialLinks'
+import { cn } from '../../lib/utils'
 
+const footerLink =
+  'text-sm text-neutral-400 transition hover:text-white'
+
+const footerHeading = 'text-[10px] font-semibold uppercase tracking-[0.24em] text-teal-400'
+
+/** Always dark — independent of site light/dark/system theme. */
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-white/[0.06] bg-black py-16">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-[1.4fr_2fr]">
-        <div className="space-y-5">
-          <CalmaLogo asLink />
-          <p className="max-w-sm text-sm leading-relaxed tracking-wide text-white/45">
-            <span className="font-semibold tracking-[0.12em] text-white/70">CALMA</span>
+    <footer
+      className={cn(
+        'mt-auto border-t border-white/[0.08] bg-neutral-950 py-16 text-neutral-400',
+        '[color-scheme:dark]',
+      )}
+    >
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 lg:grid-cols-[1.45fr_2fr]">
+        <div className="space-y-6">
+          <CalmaLogo asLink className="!from-teal-400 !to-teal-300" />
+          <p className="max-w-md text-sm leading-relaxed tracking-wide text-neutral-400">
+            <span className="font-semibold tracking-[0.12em] text-white">CALMA</span>
             {' | '}
-            Somatic movement, neural regulation, and studio-grade audio architecture.
+            Multi-frequency spatial audio and acoustic protocols engineered for deep neural
+            regulation and cognitive optimization.
           </p>
+          <FooterSocialLinks />
         </div>
 
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--accent)]/75">
-              Studio
-            </p>
-            <ul className="mt-5 space-y-3 text-sm tracking-wide text-white/50">
+            <p className={footerHeading}>Studio</p>
+            <ul className="mt-5 space-y-3 tracking-wide">
               <li>
-                <Link to="/sessions" className="transition hover:text-[var(--accent)]">
+                <Link to="/sessions" className={footerLink}>
                   Sessions
                 </Link>
               </li>
               <li>
-                <Link to="/sanctuary" className="transition hover:text-[var(--accent)]">
+                <Link to="/sanctuary" className={footerLink}>
                   Sanctuary
                 </Link>
               </li>
               <li>
-                <Link to="/#community" className="transition hover:text-[var(--accent)]">
+                <Link to="/#trust" className={footerLink}>
                   Community
                 </Link>
               </li>
@@ -39,17 +53,15 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--accent)]/75">
-              Company
-            </p>
-            <ul className="mt-5 space-y-3 text-sm tracking-wide text-white/50">
+            <p className={footerHeading}>Company</p>
+            <ul className="mt-5 space-y-3 tracking-wide">
               <li>
-                <Link to="/about" className="transition hover:text-[var(--accent)]">
+                <Link to="/about" className={footerLink}>
                   About Our Method
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="transition hover:text-[var(--accent)]">
+                <Link to="/contact" className={footerLink}>
                   Contact Support
                 </Link>
               </li>
@@ -57,23 +69,15 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--accent)]/75">
-              Legal
-            </p>
-            <ul className="mt-5 space-y-3 text-sm tracking-wide text-white/50">
+            <p className={footerHeading}>Legal</p>
+            <ul className="mt-5 space-y-3 tracking-wide">
               <li>
-                <Link
-                  to="/terms"
-                  className="text-xs text-neutral-500 transition hover:text-neutral-300"
-                >
+                <Link to="/terms" className={footerLink}>
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/privacy"
-                  className="text-xs text-neutral-500 transition hover:text-neutral-300"
-                >
+                <Link to="/privacy" className={footerLink}>
                   Privacy Policy
                 </Link>
               </li>
@@ -82,24 +86,11 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="mx-auto mt-14 max-w-6xl border-t border-white/[0.06] px-4 pt-8 text-center">
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-          <Link
-            to="/privacy"
-            className="text-xs text-neutral-500 transition hover:text-neutral-300"
-          >
-            Privacy Policy
-          </Link>
-          <Link
-            to="/terms"
-            className="text-xs text-neutral-500 transition hover:text-neutral-300"
-          >
-            Terms of Service
-          </Link>
-        </div>
-        <p className="mt-4 text-[11px] tracking-[0.14em] text-white/30">
+      <div className="mx-auto mt-14 flex max-w-6xl flex-col items-center gap-6 border-t border-white/[0.08] px-4 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-center text-[11px] tracking-[0.14em] text-neutral-500 sm:text-left">
           © 2026 CALMA. All rights reserved. Engineered for Premium Wellness.
         </p>
+        <FooterPaymentBadges />
       </div>
     </footer>
   )
