@@ -1,25 +1,21 @@
 import { motion } from 'framer-motion'
-import { Headphones, Play, Sparkles } from 'lucide-react'
+import { Headphones, Info, Play, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  startCheckoutForSanctuaryBundle,
-  startCheckoutForSanctuarySession,
-} from '../../lib/checkout'
-import { formatEurFromCents } from '../../lib/formatPrice'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
-import { PlayCountStat } from './PlayCountStat'
 import type { ClassDetails } from '../../lib/classTypes'
-import type { SanctuaryBundleOffer } from '../../lib/sanctuaryBundles'
 import { GuestPlayGateModal } from './GuestPlayGateModal'
-import { useAuth } from '../../providers/AuthProvider'
+import { SanctuaryDetailModal } from './SanctuaryDetailModal'
+import {
+  AtmosphereStudioCredit,
+  SanctuaryGuidePriceLine,
+  SanctuaryMetaBadges,
+} from './SanctuaryProtocolMeta'
 import { cn } from '../../lib/utils'
 
 type Props = {
   meditation: ClassDetails
-  bundleOffer?: SanctuaryBundleOffer | null
-  onPlayWithoutAccess?: () => void
 }
 
 function coverArtUrl(row: ClassDetails): string {
@@ -30,15 +26,9 @@ function coverArtUrl(row: ClassDetails): string {
   )
 }
 
-export function SanctuaryMeditationMarketing({
-  meditation,
-  bundleOffer = null,
-  onPlayWithoutAccess,
-}: Props) {
-  const { user } = useAuth()
+export function SanctuaryMeditationMarketing({ meditation }: Props) {
   const [guestModalOpen, setGuestModalOpen] = useState(false)
-  const [checkoutLoading, setCheckoutLoading] = useState(false)
-  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [learnOpen, setLearnOpen] = useState(false)
 
   const credits = parseAudioCredits(meditation.audio_credits)
   const guide = credits.guide ?? meditation.instructor_name
@@ -46,40 +36,10 @@ export function SanctuaryMeditationMarketing({
   const slug = meditation.slug ?? meditation.id
   const returnPath = `/sanctuary/${slug}`
   const comingSoon = meditation.sanctuary_status === 'coming_soon'
-  const price = formatEurFromCents(meditation.price_in_cents)
 
-  async function handlePlay() {
+  function openGuestGate() {
     if (comingSoon) return
-    if (!user) {
-      setGuestModalOpen(true)
-      return
-    }
-    onPlayWithoutAccess?.()
-  }
-
-  async function unlockSession() {
-    setCheckoutError(null)
-    setCheckoutLoading(true)
-    const { url, error } = await startCheckoutForSanctuarySession({
-      classId: meditation.id,
-      slug,
-    })
-    setCheckoutLoading(false)
-    if (error) setCheckoutError(error)
-    else if (url) window.location.href = url
-  }
-
-  async function unlockBundle() {
-    if (!bundleOffer) return
-    setCheckoutError(null)
-    setCheckoutLoading(true)
-    const { url, error } = await startCheckoutForSanctuaryBundle(bundleOffer.id, {
-      classId: meditation.id,
-      slug,
-    })
-    setCheckoutLoading(false)
-    if (error) setCheckoutError(error)
-    else if (url) window.location.href = url
+    setGuestModalOpen(true)
   }
 
   return (
@@ -106,10 +66,16 @@ export function SanctuaryMeditationMarketing({
             <div className="relative aspect-[4/3] overflow-hidden">
               <img src={cover} alt="" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-              {meditation.badge && (
-                <span className="absolute left-4 top-4 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#2dd4bf] ring-1 ring-[#2dd4bf]/40">
-                  {meditation.badge}
+              {comingSoon ? (
+                <span className="absolute left-4 top-4 rounded-full border border-white/25 bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
+                  Coming soon
                 </span>
+              ) : (
+                meditation.badge && (
+                  <span className="absolute left-4 top-4 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#2dd4bf] ring-1 ring-[#2dd4bf]/40">
+                    {meditation.badge}
+                  </span>
+                )
               )}
             </div>
 
@@ -121,84 +87,90 @@ export function SanctuaryMeditationMarketing({
                 <h1 className="mt-2 text-2xl font-semibold leading-tight text-white">
                   {meditation.title}
                 </h1>
-                <p className="mt-2 text-sm text-white/55">Guided by {guide}</p>
-                <div className="mt-3">
-                  <PlayCountStat count={meditation.play_count} variant="prominent" />
-                </div>
+                <SanctuaryGuidePriceLine
+                  className="mt-2"
+                  guide={guide}
+                  priceInCents={meditation.price_in_cents}
+                  showPrice={!comingSoon}
+                />
               </div>
 
-              <div className="flex flex-wrap gap-2 text-xs">
-                <PlayCountStat count={meditation.play_count} variant="pill" showIcon={false} />
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80 backdrop-blur-md">
-                  {meditation.duration_minutes} min
-                </span>
-                {credits.frequency && (
-                  <span className="rounded-full border border-[#2dd4bf]/30 bg-[#2dd4bf]/10 px-3 py-1 text-[#2dd4bf]">
-                    {credits.frequency}
-                  </span>
-                )}
-              </div>
+              <SanctuaryMetaBadges
+                dark
+                durationMinutes={meditation.duration_minutes}
+                playCount={meditation.play_count}
+                frequency={credits.frequency}
+              />
 
               {meditation.description && (
                 <p className="text-sm leading-relaxed text-white/70">{meditation.description}</p>
               )}
 
               {comingSoon ? (
-                <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
-                  Coming soon — join the waitlist from the sanctuary catalog.
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void handlePlay()}
-                  className={cn(
-                    'flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold',
-                    'bg-[#2DD4BF] text-slate-950 shadow-[0_0_32px_rgba(45,212,191,0.35)] hover:brightness-110',
-                  )}
-                >
-                  <Play className="h-5 w-5 fill-current" />
-                  Play audio
-                </button>
-              )}
-
-              {user && !comingSoon && (
-                <div className="space-y-2 border-t border-white/10 pt-4">
+                <>
+                  <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
+                    Coming soon — explore the full overview below.
+                  </p>
                   <button
                     type="button"
-                    disabled={checkoutLoading}
-                    onClick={() => void unlockSession()}
-                    className="w-full rounded-full border border-[#2DD4BF]/50 bg-[#2DD4BF]/15 py-3 text-sm font-semibold text-[#2DD4BF] disabled:opacity-50"
+                    onClick={() => setLearnOpen(true)}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-[#2DD4BF]/40 bg-[#2DD4BF]/10 py-3 text-sm font-semibold text-[#2DD4BF]"
                   >
-                    {checkoutLoading ? 'Opening Stripe…' : `Unlock · ${price}`}
+                    <Info className="h-4 w-4" />
+                    Learn more
                   </button>
-                  {bundleOffer && (
+                </>
+              ) : (
+                <>
+                  <AtmosphereStudioCredit rawCredits={meditation.audio_credits} className="pt-1" />
+
+                  <div className="flex gap-3">
                     <button
                       type="button"
-                      disabled={checkoutLoading}
-                      onClick={() => void unlockBundle()}
-                      className="w-full rounded-full border border-white/15 py-2.5 text-xs text-white/70 hover:border-[#2DD4BF]/40"
+                      onClick={() => setLearnOpen(true)}
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 py-3 text-sm font-medium text-white backdrop-blur-md"
                     >
-                      Bundle offer available
+                      <Info className="h-4 w-4" />
+                      Learn more
                     </button>
-                  )}
-                </div>
-              )}
+                    <button
+                      type="button"
+                      onClick={openGuestGate}
+                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-[#2DD4BF]/40 bg-[#2DD4BF]/10 py-3 text-sm font-semibold text-[#2DD4BF]"
+                    >
+                      <Play className="h-4 w-4 fill-current" />
+                      Enter Sanctuary
+                    </button>
+                  </div>
 
-              {!user && !comingSoon && (
-                <p className="flex items-center gap-2 text-xs text-white/45">
-                  <Headphones className="h-3.5 w-3.5" />
-                  <Sparkles className="h-3.5 w-3.5 text-[#2dd4bf]" />
-                  Sign in or create an account to unlock playback
-                </p>
-              )}
+                  <button
+                    type="button"
+                    onClick={openGuestGate}
+                    className={cn(
+                      'flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold',
+                      'bg-[#2DD4BF] text-slate-950 shadow-[0_0_32px_rgba(45,212,191,0.35)] hover:brightness-110',
+                    )}
+                  >
+                    <Play className="h-5 w-5 fill-current" />
+                    Play audio
+                  </button>
 
-              {checkoutError && (
-                <p className="text-sm text-red-300">{checkoutError}</p>
+                  <p className="flex items-center gap-2 text-xs text-white/45">
+                    <Headphones className="h-3.5 w-3.5" />
+                    <Sparkles className="h-3.5 w-3.5 text-[#2dd4bf]" />
+                    Sign in or create an account to unlock playback
+                  </p>
+                </>
               )}
             </div>
           </motion.div>
         </div>
       </div>
+
+      <SanctuaryDetailModal
+        row={learnOpen ? meditation : null}
+        onClose={() => setLearnOpen(false)}
+      />
 
       <GuestPlayGateModal
         open={guestModalOpen}

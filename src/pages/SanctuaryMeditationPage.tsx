@@ -174,7 +174,7 @@ export function SanctuaryMeditationPage() {
       ) : user && !hasAccess ? (
         <SanctuarySalesGate meditation={meditation} bundleOffer={bundleOffer} />
       ) : (
-        <SanctuaryMeditationMarketing meditation={meditation} bundleOffer={bundleOffer} />
+        <SanctuaryMeditationMarketing meditation={meditation} />
       )}
     </div>
   )

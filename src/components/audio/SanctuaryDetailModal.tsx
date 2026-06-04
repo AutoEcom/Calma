@@ -1,4 +1,4 @@
-import { Clock, Headphones, Sparkles } from 'lucide-react'
+import { Headphones, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   CATEGORY_LABELS,
@@ -6,11 +6,11 @@ import {
   type AudioSanctuaryCategory,
 } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
-import { PlayCountStat } from './PlayCountStat'
 import { formatEurFromCents } from '../../lib/formatPrice'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import { normalizeWhatToExpect } from '../../lib/whatToExpect'
 import type { Tables } from '../../lib/database.types'
+import { SanctuaryMetaBadges } from './SanctuaryProtocolMeta'
 import { GlassModal } from '../ui/GlassModal'
 import { cn } from '../../lib/utils'
 
@@ -48,14 +48,11 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
               Coming soon
             </span>
           )}
-          <PlayCountStat
-            count={row.play_count}
-            variant="muted"
-            className="rounded-full bg-[var(--accent)]/10 px-2.5 py-1 text-[var(--accent)]"
+          <SanctuaryMetaBadges
+            durationMinutes={row.duration_minutes}
+            playCount={row.play_count}
+            frequency={credits.frequency}
           />
-          <span className="rounded-full bg-slate-200/80 px-2.5 py-1 text-slate-800 dark:bg-white/10 dark:text-neutral-300">
-            {row.duration_minutes} min
-          </span>
           {category && (
             <span className="rounded-full bg-slate-200/80 px-2.5 py-1 text-slate-800 dark:bg-white/10 dark:text-neutral-300">
               {category}
@@ -66,12 +63,14 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
         <p className="text-sm text-slate-800 dark:text-neutral-300">
           <Headphones className="mr-1.5 inline h-4 w-4 text-[var(--accent)]" />
           Guided by {guide}
-          {credits.frequency ? (
+          {!comingSoon && (
             <>
               <span className="text-slate-400 dark:text-neutral-600"> · </span>
-              <span className="font-medium text-[var(--accent)]">{credits.frequency}</span>
+              <span className="font-semibold text-slate-900 dark:text-neutral-100">
+                {formatEurFromCents(row.price_in_cents)}
+              </span>
             </>
-          ) : null}
+          )}
         </p>
 
         {row.description && (
@@ -111,14 +110,7 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
           </p>
         )}
 
-        <div className="flex flex-col gap-3 border-t border-neutral-200/60 pt-4 dark:border-white/[0.08]">
-          <p className="text-sm font-semibold text-slate-900 dark:text-neutral-100">
-            {formatEurFromCents(row.price_in_cents)}
-            <span className="ml-2 font-normal text-slate-600 dark:text-neutral-500">
-              <Clock className="mr-0.5 inline h-3.5 w-3.5" />
-              Dolby Atmos · secure HLS
-            </span>
-          </p>
+        <div className="border-t border-neutral-200/60 pt-4 dark:border-white/[0.08]">
           {comingSoon ? (
             <p className="text-sm leading-relaxed text-slate-700 dark:text-neutral-400">
               This protocol is not open for playback yet. Explore the details above and check back

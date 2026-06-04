@@ -82,3 +82,25 @@ export async function startCheckoutForSanctuaryBundle(
   if (!data?.url) return { error: 'No checkout URL returned' }
   return { url: data.url }
 }
+
+/** Stripe checkout from Sanctuary Bundles catalog (returns to /sanctuary). */
+export async function startCheckoutForBundleCatalog(
+  bundleId: string,
+): Promise<{ url?: string; error?: string }> {
+  const origin = window.location.origin
+  const { data, error } = await supabase.functions.invoke<{ url?: string; error?: string }>(
+    'create-checkout-session',
+    {
+      body: {
+        bundleId,
+        successUrl: `${origin}/sanctuary?status=success`,
+        cancelUrl: `${origin}/sanctuary?status=cancel`,
+      },
+    },
+  )
+
+  if (error) return { error: error.message }
+  if (data?.error) return { error: String(data.error) }
+  if (!data?.url) return { error: 'No checkout URL returned' }
+  return { url: data.url }
+}
