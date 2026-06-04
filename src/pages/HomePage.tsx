@@ -3,6 +3,9 @@ import { Check, Headphones, Loader2, Radio, Shield, Sparkles, Waves } from 'luci
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { ClassCard } from '../components/class/ClassCard'
+import { EngineeredInfrastructureGrid } from '../components/landing/EngineeredInfrastructureGrid'
+import { FrequencySpectrumBar } from '../components/landing/FrequencySpectrumBar'
+import { TrustProofReviews } from '../components/landing/TrustProofReviews'
 import { GlassCta } from '../components/ui/GlassCta'
 import { NeonPrimaryLink } from '../components/ui/NeonGlow'
 import { CLASS_PUBLIC_SELECT } from '../lib/classSelect'
@@ -27,19 +30,19 @@ const ARCHITECTURE_STEPS = [
     step: '01',
     icon: Shield,
     title: 'Secure Curation',
-    body: 'Create your private profile in seconds. Every live grid and acoustic protocol is fully integrated with secure Stripe architecture.',
+    body: 'Create your private profile in seconds. Every live grid and spatial acoustic protocol is mapped through secure Stripe architecture.',
   },
   {
     step: '02',
     icon: Sparkles,
     title: 'Custom Intention',
-    body: 'Select your live session or on-demand audio protocol. Access is generated instantly and mapped directly to your personal workspace.',
+    body: 'Select your live transmission or on-demand multi-frequency protocol. Access unlocks instantly inside your personal sanctuary workspace.',
   },
   {
     step: '03',
     icon: Waves,
     title: 'Immersive Transition',
-    body: 'Step into the live room or activate the audio sanctuary. Studio energy meets the absolute privacy of your own space.',
+    body: 'Enter the live room or activate spatial HLS playback. Studio-grade nervous-system regulation meets absolute privacy.',
   },
 ]
 
@@ -152,7 +155,7 @@ export function HomePage() {
             transition={{ duration: 0.4 }}
             className="text-[11px] font-medium uppercase tracking-[0.32em] text-[var(--accent)]"
           >
-            CALMA • DIGITAL SANCTUARY
+            The science of vibrations
           </motion.p>
 
           <motion.h1
@@ -164,9 +167,9 @@ export function HomePage() {
               calmaHeading,
             )}
           >
-            Somatic Evolution. Neural Calm.{' '}
+            Multi-Frequency Neural Regulation.{' '}
             <span className="bg-gradient-to-r from-[var(--accent)] to-[#5eead4] bg-clip-text text-transparent">
-              Studio-Grade Sound.
+              Spatial Acoustic Protocols.
             </span>
           </motion.h1>
 
@@ -176,10 +179,10 @@ export function HomePage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className={cn('max-w-xl text-base leading-[1.75] tracking-wide md:text-lg', calmaMuted)}
           >
-            A hyper-premium virtual space engineered with obsessive attention to physical and acoustic
-            detail. Experience immersive, high-definition live movement sessions and quantum audio
-            protocols designed to rewrite your baseline stress and elevate your reality. Move with
-            intention. Breathe into pure space.
+            Calma is a hyper-premium digital sanctuary built on the science of vibrations — not
+            single-tone hacks. Curated spatial acoustic protocols span 174Hz through 963Hz for DNA
+            repair, cellular harmony, and parasympathetic nervous-system regulation. Pair immersive
+            live transmissions with on-demand neural software you can feel in minutes.
           </motion.p>
 
           <motion.div
@@ -188,11 +191,11 @@ export function HomePage() {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="flex flex-wrap items-center gap-4"
           >
-            <NeonPrimaryLink to="/sessions" className="tracking-[0.08em]">
-              [ Book a Session ]
+            <NeonPrimaryLink to="/sanctuary" className="tracking-[0.08em]">
+              [ Explore Protocols ]
             </NeonPrimaryLink>
             <Link
-              to="/sanctuary"
+              to="/sessions"
               className={cn(
                 'inline-flex items-center rounded-full px-6 py-3',
                 zenFloat,
@@ -200,7 +203,7 @@ export function HomePage() {
                 'transition hover:bg-[var(--accent)]/10 hover:text-[var(--accent)] dark:text-neutral-200',
               )}
             >
-              [ Explore the Sanctuary ]
+              [ Book Live Transmission ]
             </Link>
           </motion.div>
         </div>
@@ -214,28 +217,118 @@ export function HomePage() {
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(45,212,191,0.22),transparent_70%)] blur-2xl" />
           <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(250,204,21,0.12),transparent_70%)] blur-2xl" />
           <p className="relative text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]/90">
-            Acoustic architecture
+            Spatial acoustic architecture
           </p>
-          <p className="relative mt-5 text-sm leading-relaxed tracking-wide text-slate-600 dark:text-white/55">
-            Live movement grids broadcast in broadcast-grade fidelity. Audio Sanctuary protocols are
-            mastered in an active 8+1 Dolby Atmos spatial field — engineered for nervous-system
-            regulation, not background noise.
-          </p>
+          <FrequencySpectrumBar className="relative mt-5" />
           <ul className="relative mt-8 space-y-4 text-sm tracking-wide text-slate-600 dark:text-white/45">
             <li className="flex items-start gap-3">
               <Radio className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-              Real-time instructor presence with intimate cohort sizing
+              Live movement grids with intimate cohort sizing
             </li>
             <li className="flex items-start gap-3">
               <Headphones className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-              528Hz-forward frequencies &amp; Theta binaural entrainment on demand
+              Multi-band entrainment from foundation 174Hz to unity 963Hz
             </li>
             <li className="flex items-start gap-3">
               <Shield className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-              Stripe-secured access mapped to your private workspace
+              Secure HLS + Stripe — clinical-grade delivery, private workspace
             </li>
           </ul>
         </motion.div>
+      </section>
+
+      {/* Quantum Acoustic Protocols — directly beneath hero */}
+      <section id="audio-sanctuary" className="scroll-mt-28">
+        <div className={zenSanctuarySection}>
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(45,212,191,0.08),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_bottom_left,rgba(45,212,191,0.12),transparent_60%)]" />
+          <div className="relative space-y-8">
+            <div className="max-w-2xl">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">
+                Audio Sanctuary
+              </p>
+              <h2 className={cn('mt-3 text-2xl font-semibold tracking-tight md:text-3xl', calmaHeading)}>
+                Quantum Acoustic Protocols
+              </h2>
+              <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
+                Spatial acoustic protocols engineered across the full vibration spectrum — 174Hz
+                grounding through 528Hz repair bands to 963Hz unity states. Dolby Atmos mastering,
+                secure HLS streaming, and theta-grade entrainment designed for measurable HRV shifts —
+                not background ambience.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 py-14 text-[var(--text-muted)]">
+                <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
+              </div>
+            ) : featuredAudio.length === 0 ? (
+              <p className={cn('rounded-2xl px-4 py-10 text-center text-sm tracking-wide', zenFloat, calmaMuted)}>
+                Featured acoustic protocols will appear here once curated in admin.
+              </p>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {featuredAudio.map((c, i) => (
+                  <ClassCard key={c.id} cls={c} index={i} bookedCount={0} />
+                ))}
+              </div>
+            )}
+
+            <GlassCta
+              to="/sanctuary"
+              label="Enter the Audio Sanctuary"
+              className="bg-white/80 text-slate-900 ring-1 ring-[#2DD4BF]/30 hover:bg-[#2DD4BF]/10 hover:text-[#0d9488] dark:bg-neutral-900/60 dark:text-neutral-100 dark:hover:bg-[#2DD4BF]/15 dark:hover:text-[#2DD4BF]"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Live Transmissions — below protocols */}
+      <section id="live-sessions" className="scroll-mt-28">
+        <div className={zenSection}>
+          <div className={zenSectionAccent} />
+          <div className="relative space-y-8">
+            <div className="max-w-2xl">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">
+                Studio Sessions
+              </p>
+              <h2 className={cn('mt-3 text-2xl font-semibold tracking-tight md:text-3xl', calmaHeading)}>
+                Upcoming Live Transmissions
+              </h2>
+              <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
+                Curated virtual spaces with real-time instructor presence — the kinetic complement to
+                your multi-frequency sanctuary stack. Intimate cohorts, broadcast-grade fidelity,
+                raw studio energy delivered to your mat.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 py-14 text-[var(--text-muted)]">
+                <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
+              </div>
+            ) : error ? (
+              <p className="rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {error}
+              </p>
+            ) : featuredLive.length === 0 ? (
+              <p className={cn('rounded-2xl px-4 py-10 text-center text-sm tracking-wide', zenFloat, calmaMuted)}>
+                Featured live transmissions will appear here once curated in admin.
+              </p>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {featuredLive.map((c, i) => (
+                  <ClassCard
+                    key={c.id}
+                    cls={c}
+                    index={i}
+                    bookedCount={bookedByClass[c.id] ?? 0}
+                  />
+                ))}
+              </div>
+            )}
+
+            <GlassCta to="/sessions" label="Explore All Live Sessions" />
+          </div>
+        </div>
       </section>
 
       {/* Architecture of Ease */}
@@ -245,8 +338,8 @@ export function HomePage() {
             The Architecture of Ease
           </h2>
           <p className={cn('mt-4 text-base leading-relaxed tracking-wide', calmaMuted)}>
-            No friction. No mystery links. No digital noise. Your journey into deep presence is
-            streamlined into three seamless layers:
+            The science of vibrations, delivered without friction. Three seamless layers from
+            checkout to spatial playback:
           </p>
         </div>
         <div className="relative grid gap-8 md:grid-cols-3">
@@ -276,112 +369,9 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Studio Sessions */}
-      <section id="live-sessions" className="scroll-mt-28">
-        <div className={zenSection}>
-          <div className={zenSectionAccent} />
-          <div className="relative space-y-8">
-            <div className="max-w-2xl">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">
-                Studio Sessions
-              </p>
-              <h2 className={cn('mt-3 text-2xl font-semibold tracking-tight md:text-3xl', calmaHeading)}>
-                Upcoming Live Transmissions
-              </h2>
-              <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
-                Curated virtual spaces featuring real-time professional adjustments, intimate group
-                sizes, and raw studio energy broadcasted live to your mat.
-              </p>
-            </div>
+      <EngineeredInfrastructureGrid />
 
-            {loading ? (
-              <div className="flex items-center justify-center gap-2 py-14 text-[var(--text-muted)]">
-                <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
-              </div>
-            ) : error ? (
-              <p className="rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {error}
-              </p>
-            ) : featuredLive.length === 0 ? (
-              <p className={cn('rounded-2xl px-4 py-10 text-center text-sm tracking-wide', zenFloat, calmaMuted)}>
-                Featured live transmissions will appear here once curated in admin.
-              </p>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {featuredLive.map((c, i) => (
-                  <ClassCard
-                    key={c.id}
-                    cls={c}
-                    index={i}
-                    bookedCount={bookedByClass[c.id] ?? 0}
-                  />
-                ))}
-              </div>
-            )}
-
-            <GlassCta
-              to="/sessions"
-              label="Explore All Live Sessions • Виж всички"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Audio Sanctuary */}
-      <section id="audio-sanctuary" className="scroll-mt-28">
-        <div className={zenSanctuarySection}>
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(45,212,191,0.08),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_bottom_left,rgba(45,212,191,0.12),transparent_60%)]" />
-          <div className="relative space-y-8">
-            <div className="max-w-2xl">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">
-                Audio Sanctuary
-              </p>
-              <h2 className={cn('mt-3 text-2xl font-semibold tracking-tight md:text-3xl', calmaHeading)}>
-                Quantum Acoustic Protocols
-              </h2>
-              <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
-                Subconscious cellular reprogramming on-demand. Immersive, master-grade audio tracks
-                mixed in an active 8+1 Dolby Atmos spatial grid. Infused with 528Hz DNA-repair
-                frequencies and deep Theta binaural beats to instantly bypass analytical blockages.
-              </p>
-            </div>
-
-            {loading ? (
-              <div className="flex items-center justify-center gap-2 py-14 text-[var(--text-muted)]">
-                <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
-              </div>
-            ) : featuredAudio.length === 0 ? (
-              <p className={cn('rounded-2xl px-4 py-10 text-center text-sm tracking-wide', zenFloat, calmaMuted)}>
-                Featured acoustic protocols will appear here once curated in admin.
-              </p>
-            ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {featuredAudio.map((c, i) => (
-                  <ClassCard key={c.id} cls={c} index={i} bookedCount={0} />
-                ))}
-              </div>
-            )}
-
-            <GlassCta
-              to="/sanctuary"
-              label="Enter the Audio Sanctuary • Виж всички"
-              className="bg-white/80 text-slate-900 ring-1 ring-[#2DD4BF]/30 hover:bg-[#2DD4BF]/10 hover:text-[#0d9488] dark:bg-neutral-900/60 dark:text-neutral-100 dark:hover:bg-[#2DD4BF]/15 dark:hover:text-[#2DD4BF]"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section id="community" className={cn('scroll-mt-28 p-8 text-center sm:p-10', zenFloat)}>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]">
-          The Calma Collective
-        </p>
-        <h2 className={cn('mt-3 text-xl font-semibold tracking-tight sm:text-2xl', calmaHeading)}>
-          Community voices arrive soon
-        </h2>
-        <p className={cn('mx-auto mt-3 max-w-md text-sm', calmaMuted)}>
-          Member stories will appear here as the collective grows.
-        </p>
-      </section>
+      <TrustProofReviews />
     </div>
   )
 }
