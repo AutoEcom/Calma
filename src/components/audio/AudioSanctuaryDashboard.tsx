@@ -88,7 +88,8 @@ export function AudioSanctuaryDashboard() {
   const featured = useMemo(() => pickFeatured(items), [items])
 
   const filtered = useMemo(() => {
-    let list = category === 'all' ? items : items.filter((i) => i.audio_sanctuary_category === category)
+    let list =
+      category === 'all' ? items : items.filter((i) => i.audio_sanctuary_category === category)
     if (featured && category === 'all') {
       list = list.filter((i) => i.id !== featured.id)
     }
@@ -96,12 +97,17 @@ export function AudioSanctuaryDashboard() {
   }, [items, category, featured])
 
   return (
-    <div className={cn('relative min-h-[calc(100vh-8rem)] w-full max-w-full min-w-0 overflow-x-hidden', sanctuaryPageCanvas)}>
+    <div className={cn('relative w-full min-w-0 pb-12', sanctuaryPageCanvas)}>
       <header className="mb-8 space-y-3 sm:mb-10">
         <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#2DD4BF]">
           Audio Sanctuary
         </p>
-        <h1 className={cn('text-2xl font-light tracking-tight sm:text-3xl md:text-4xl', sanctuaryHeading)}>
+        <h1
+          className={cn(
+            'text-2xl font-light tracking-tight sm:text-3xl md:text-4xl',
+            sanctuaryHeading,
+          )}
+        >
           Quantum Acoustic Protocols
         </h1>
         <p className={cn('max-w-2xl text-sm leading-relaxed tracking-wide', sanctuaryMuted)}>
@@ -110,12 +116,12 @@ export function AudioSanctuaryDashboard() {
         </p>
       </header>
 
-      <div className="mb-10 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="mb-10 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => setCategory('all')}
           className={cn(
-            'shrink-0 rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition',
+            'rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition',
             category === 'all'
               ? 'border-[#2DD4BF] bg-[#2DD4BF] text-slate-950'
               : sanctuaryCategoryIdle,
@@ -129,7 +135,7 @@ export function AudioSanctuaryDashboard() {
             type="button"
             onClick={() => setCategory(cat)}
             className={cn(
-              'shrink-0 rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition',
+              'rounded-full border px-4 py-2 text-xs font-medium tracking-wide transition',
               category === cat
                 ? 'border-[#2DD4BF] bg-[#2DD4BF] text-slate-950'
                 : sanctuaryCategoryIdle,
@@ -166,14 +172,9 @@ export function AudioSanctuaryDashboard() {
               No protocols in this category.
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((row, i) => (
-                <SanctuaryCatalogCard
-                  key={row.id}
-                  row={row}
-                  index={i}
-                  hasAccess={accessMap[row.id]}
-                />
+                <SanctuaryCatalogCard key={row.id} row={row} index={i} />
               ))}
             </div>
           )}

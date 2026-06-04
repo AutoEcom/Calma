@@ -48,7 +48,7 @@ export const sanctuaryPageCanvas =
 
 export const sanctuaryHeading = 'text-slate-900 dark:text-neutral-100'
 
-export const sanctuaryMuted = 'text-slate-600 dark:text-neutral-400'
+export const sanctuaryMuted = 'text-slate-800 dark:text-neutral-400'
 
 export const sanctuaryCategoryIdle =
   'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-400'

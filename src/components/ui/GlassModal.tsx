@@ -42,7 +42,7 @@ export function GlassModal({ open, onClose, title, children, className }: Props)
       <div
         className={cn(
           'relative z-10 w-full max-w-lg max-h-[min(90vh,720px)] overflow-y-auto rounded-3xl',
-          'border border-white/20 bg-white/80 p-6 shadow-[0_32px_80px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl',
+          'border border-neutral-200/50 bg-white/10 p-6 shadow-[0_32px_80px_-24px_rgba(15,23,42,0.2)] backdrop-blur-md',
           'dark:border-white/10 dark:bg-black/40 dark:shadow-[0_32px_80px_-24px_rgba(0,0,0,0.75)]',
           className,
         )}

@@ -1,6 +1,7 @@
-import { Bell, Play, Sparkles } from 'lucide-react'
+import { Bell, Info, Play, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { SanctuaryDetailModal } from './SanctuaryDetailModal'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
 import { sanctuaryCoverUrl, sanctuaryMeshGradient } from '../../lib/sanctuaryCover'
@@ -26,6 +27,7 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
   const comingSoon = featured.sanctuary_status === 'coming_soon'
   const [notifyEmail, setNotifyEmail] = useState('')
   const [notifyStatus, setNotifyStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [learnOpen, setLearnOpen] = useState(false)
 
   const submitWaitlist = async () => {
     if (!notifyEmail.trim()) return
@@ -39,6 +41,7 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
   }
 
   return (
+    <>
     <section className="relative mb-10 w-full min-w-0 overflow-hidden rounded-3xl bg-white/60 shadow-[0_24px_64px_-28px_rgba(15,23,42,0.14)] ring-1 ring-[#2DD4BF]/15 backdrop-blur-sm dark:bg-neutral-900/40 dark:shadow-[0_32px_80px_-32px_rgba(45,212,191,0.25)] dark:ring-[#2DD4BF]/20 sm:mb-12">
       <div className="grid min-h-[280px] grid-cols-1 md:grid-cols-[1.1fr_1fr]">
         <div className="relative min-h-[220px] md:min-h-0">
@@ -60,7 +63,12 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
         </div>
 
         <div className="relative flex flex-col justify-center bg-white/95 p-6 sm:p-8 dark:bg-black/80 dark:backdrop-blur-sm md:dark:bg-black/60">
-          {featured.badge && (
+          {comingSoon && (
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#2DD4BF]">
+              Coming soon
+            </p>
+          )}
+          {featured.badge && !comingSoon && (
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#2DD4BF]">
               {featured.badge}
             </p>
@@ -84,23 +92,33 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
 
           <div className="mt-8">
             {comingSoon ? (
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <input
-                  type="email"
-                  value={notifyEmail}
-                  onChange={(e) => setNotifyEmail(e.target.value)}
-                  placeholder="Email for launch alert"
-                  className="min-w-0 w-full flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#2DD4BF]/50 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-white/30"
-                />
+              <div className="space-y-3">
                 <button
                   type="button"
-                  onClick={() => void submitWaitlist()}
-                  disabled={notifyStatus === 'sending'}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2DD4BF] px-5 py-2.5 text-sm font-semibold text-black"
+                  onClick={() => setLearnOpen(true)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#2DD4BF]/40 bg-[#2DD4BF]/10 px-5 py-2.5 text-sm font-semibold text-[#0f766e] dark:text-[#2DD4BF] sm:w-auto"
                 >
-                  <Bell className="h-4 w-4" />
-                  Notify me
+                  <Info className="h-4 w-4" />
+                  Learn more
                 </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input
+                    type="email"
+                    value={notifyEmail}
+                    onChange={(e) => setNotifyEmail(e.target.value)}
+                    placeholder="Email for launch alert"
+                    className="min-w-0 w-full flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#2DD4BF]/50 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-white/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void submitWaitlist()}
+                    disabled={notifyStatus === 'sending'}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2DD4BF] px-5 py-2.5 text-sm font-semibold text-black"
+                  >
+                    <Bell className="h-4 w-4" />
+                    Notify me
+                  </button>
+                </div>
               </div>
             ) : !user ? (
               <Link
@@ -111,13 +129,23 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
                 Sign in to begin
               </Link>
             ) : (
-              <Link
-                to={sanctuaryDetailPath(featured)}
-                className="inline-flex items-center gap-2 rounded-full bg-[#2DD4BF] px-6 py-3 text-sm font-semibold text-black shadow-[0_0_40px_rgba(45,212,191,0.35)] hover:brightness-110"
-              >
-                <Play className="h-4 w-4 fill-current" />
-                {hasAccess ? 'Enter sanctuary' : 'Unlock protocol'}
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setLearnOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-5 py-2.5 text-sm font-medium text-slate-800 dark:border-white/15 dark:bg-white/10 dark:text-neutral-200"
+                >
+                  <Info className="h-4 w-4" />
+                  Learn more
+                </button>
+                <Link
+                  to={sanctuaryDetailPath(featured)}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#2DD4BF] px-6 py-3 text-sm font-semibold text-black shadow-[0_0_40px_rgba(45,212,191,0.35)] hover:brightness-110"
+                >
+                  <Play className="h-4 w-4 fill-current" />
+                  {hasAccess ? 'Enter sanctuary' : 'Unlock protocol'}
+                </Link>
+              </div>
             )}
             {notifyStatus === 'sent' && (
               <p className="mt-2 text-xs text-[#2DD4BF]">You&apos;re on the waitlist.</p>
@@ -126,5 +154,10 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
         </div>
       </div>
     </section>
+      <SanctuaryDetailModal
+        row={learnOpen ? featured : null}
+        onClose={() => setLearnOpen(false)}
+      />
+    </>
   )
 }
