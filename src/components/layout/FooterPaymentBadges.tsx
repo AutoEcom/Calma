@@ -1,8 +1,13 @@
+import { cn } from '../../lib/utils'
+
 /** Monochrome Stripe payment marks for sub-footer trust row. */
 export function FooterPaymentBadges() {
   return (
     <div
-      className="flex flex-wrap items-center justify-center gap-3 opacity-40 sm:justify-end"
+      className={cn(
+        'flex flex-wrap items-center justify-center gap-3 sm:justify-end',
+        'opacity-75 brightness-110 transition-opacity duration-300 hover:opacity-100',
+      )}
       aria-label="Accepted payment methods"
     >
       <VisaMark />

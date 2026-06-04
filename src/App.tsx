@@ -12,9 +12,9 @@ import { LoginPage } from './pages/LoginPage'
 import { PrivacyPage } from './pages/PrivacyPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { RegisterPage } from './pages/RegisterPage'
-import { AboutPage } from './pages/AboutPage'
+import { AboutMethodsPage } from './pages/AboutMethodsPage'
 import { AudioSanctuaryPage } from './pages/AudioSanctuaryPage'
-import { ContactPage } from './pages/ContactPage'
+import { SupportPage } from './pages/SupportPage'
 import { SanctuaryMeditationPage } from './pages/SanctuaryMeditationPage'
 import { SessionsPage } from './pages/SessionsPage'
 import { TermsPage } from './pages/TermsPage'
@@ -32,8 +32,10 @@ export default function App() {
           <Route path="sessions" element={<SessionsPage />} />
           <Route path="sanctuary" element={<AudioSanctuaryPage />} />
           <Route path="sanctuary/:slug" element={<SanctuaryMeditationPage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="contact" element={<ContactPage />} />
+          <Route path="about-methods" element={<AboutMethodsPage />} />
+          <Route path="about" element={<Navigate to="/about-methods" replace />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="contact" element={<Navigate to="/support" replace />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="privacy" element={<PrivacyPage />} />

@@ -56,12 +56,12 @@ export function SiteFooter() {
             <p className={footerHeading}>Company</p>
             <ul className="mt-5 space-y-3 tracking-wide">
               <li>
-                <Link to="/about" className={footerLink}>
-                  About Our Method
+                <Link to="/about-methods" className={footerLink}>
+                  About Our Methods
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className={footerLink}>
+                <Link to="/support" className={footerLink}>
                   Contact Support
                 </Link>
               </li>
