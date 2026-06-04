@@ -62,26 +62,45 @@ export function SiteFooter() {
             </p>
             <ul className="mt-5 space-y-3 text-sm tracking-wide text-white/50">
               <li>
-                <Link to="/terms" className="transition hover:text-[var(--accent)]">
+                <Link
+                  to="/terms"
+                  className="text-xs text-neutral-500 transition hover:text-neutral-300"
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="transition hover:text-[var(--accent)]">
+                <Link
+                  to="/privacy"
+                  className="text-xs text-neutral-500 transition hover:text-neutral-300"
+                >
                   Privacy Policy
                 </Link>
-              </li>
-              <li>
-                <span className="text-white/25">Cookie Preferences</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <p className="mx-auto mt-14 max-w-6xl border-t border-white/[0.06] px-4 pt-8 text-center text-[11px] tracking-[0.14em] text-white/30">
-        © 2026 CALMA. All rights reserved. Engineered for Premium Wellness.
-      </p>
+      <div className="mx-auto mt-14 max-w-6xl border-t border-white/[0.06] px-4 pt-8 text-center">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <Link
+            to="/privacy"
+            className="text-xs text-neutral-500 transition hover:text-neutral-300"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            to="/terms"
+            className="text-xs text-neutral-500 transition hover:text-neutral-300"
+          >
+            Terms of Service
+          </Link>
+        </div>
+        <p className="mt-4 text-[11px] tracking-[0.14em] text-white/30">
+          © 2026 CALMA. All rights reserved. Engineered for Premium Wellness.
+        </p>
+      </div>
     </footer>
   )
 }

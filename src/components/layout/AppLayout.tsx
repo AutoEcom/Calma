@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { CosmicBackground } from './CosmicBackground'
+import { CookieBanner } from './CookieBanner'
 import { SiteFooter } from './SiteFooter'
 import { CalmaLogo } from './CalmaLogo'
 import { HeaderAccountMenu, HeaderDashboardButton } from './HeaderAccountMenu'
@@ -95,6 +96,7 @@ export function AppLayout() {
         </main>
 
         <SiteFooter />
+        <CookieBanner />
       </div>
     </div>
   )
