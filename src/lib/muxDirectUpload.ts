@@ -1,5 +1,5 @@
 import { FunctionsHttpError } from '@supabase/supabase-js'
-import * as UpChunk from '@mux/upchunk'
+import { createUpload } from '@mux/upchunk'
 import { supabase } from './supabase'
 
 export type MuxDirectUploadSession = {
@@ -139,7 +139,7 @@ export function uploadFileToMux(
   handlers?: MuxChunkUploadHandlers,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const upload = UpChunk.createUpload({
+    const upload = createUpload({
       endpoint: uploadUrl,
       file,
       chunkSize: 5120,
