@@ -139,6 +139,24 @@ Deno.serve(async (req) => {
     })
   }
 
+  const trimmedPath = storagePath.trim()
+  const isMuxHls =
+    trimmedPath.startsWith('https://stream.mux.com/') &&
+    trimmedPath.endsWith('.m3u8')
+
+  if (isMuxHls) {
+    return new Response(
+      JSON.stringify({
+        url: trimmedPath,
+        variant,
+        expiresIn: SIGNED_URL_EXPIRY_SEC,
+        storagePath: trimmedPath,
+        source: 'mux',
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
+
   const { data: signed, error: signErr } = await admin.storage
     .from(MEDITATIONS_BUCKET)
     .createSignedUrl(storagePath, SIGNED_URL_EXPIRY_SEC)

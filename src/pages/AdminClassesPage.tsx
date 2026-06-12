@@ -406,7 +406,7 @@ export function AdminClassesPage() {
       !audioForm.audioHlsStereoKey.trim() &&
       !audioForm.audioHlsAtmosKey.trim()
     ) {
-      setError('Active meditations require at least one HLS master path (Atmos or Stereo).')
+      setError('Active meditations require at least one stream URL (Atmos or Stereo).')
       return
     }
 
@@ -559,8 +559,8 @@ export function AdminClassesPage() {
             <p className="max-w-xl text-sm text-[var(--text-muted)]">
               Live studio sessions (Mux) and{' '}
               <span className="text-[var(--accent)]">Audio Sanctuary</span> guided meditations.
-              Covers upload to <span className="text-[var(--accent)]">class-media</span>; HLS masters
-              to private <span className="text-[var(--accent)]">meditations</span> storage.
+              Cover art uploads to <span className="text-[var(--accent)]">class-media</span>; audio
+              masters stream via Mux direct upload (no storage cap).
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -743,7 +743,7 @@ export function AdminClassesPage() {
                     Guided meditation
                   </span>
                   <span className="mt-1 block text-xs opacity-80">
-                    Audio Sanctuary · HLS · on demand
+                    Audio Sanctuary · Mux stream · on demand
                   </span>
                 </button>
               </div>
