@@ -1,93 +1,71 @@
 import { motion } from 'framer-motion'
-import { CalmaBreathLogo } from './CalmaBreathLogo'
 import { cn } from '../../lib/utils'
 
-const BAR_COUNT = 24
+/** 8s meditative breath — 4s inhale, 4s exhale; independent of audio amplitude. */
+const BREATH_CYCLE = {
+  duration: 8,
+  repeat: Infinity,
+  ease: 'easeInOut' as const,
+  times: [0, 0.5, 1] as number[],
+}
 
 type Props = {
-  playing: boolean
   size?: number
   className?: string
 }
 
-export function PlayerBreathVisualizer({ playing, size = 200, className }: Props) {
-  return (
-    <div className={cn('relative flex items-center justify-center', className)}>
-      {/* Outer breathing rings */}
-      {[1.55, 1.25, 1.05].map((scale, i) => (
-        <motion.div
-          key={scale}
-          className="pointer-events-none absolute rounded-full border border-[#2DD4BF]/20"
-          style={{ width: size * scale, height: size * scale }}
-          animate={
-            playing
-              ? {
-                  scale: [1, 1.06, 1],
-                  opacity: [0.15 + i * 0.05, 0.35 - i * 0.05, 0.15 + i * 0.05],
-                }
-              : { scale: 1, opacity: 0.12 + i * 0.04 }
-          }
-          transition={{
-            duration: playing ? 4 + i * 0.8 : 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: i * 0.4,
-          }}
-        />
-      ))}
+export function PlayerBreathVisualizer({ size = 220, className }: Props) {
+  const orbSize = size * 0.72
 
-      {/* Waveform ring */}
-      <div
-        className="absolute flex items-center justify-center gap-[3px]"
-        style={{ width: size * 1.35, height: size * 0.5 }}
-        aria-hidden
-      >
-        {Array.from({ length: BAR_COUNT }).map((_, i) => (
-          <motion.span
-            key={i}
-            className="w-[3px] rounded-full bg-gradient-to-t from-[#2DD4BF]/30 to-[#2DD4BF]"
-            animate={
-              playing
-                ? {
-                    height: [
-                      8 + (i % 5) * 3,
-                      18 + ((i * 7) % 11) * 2,
-                      10 + (i % 4) * 2,
-                    ],
-                    opacity: [0.4, 0.95, 0.5],
-                  }
-                : { height: 6 + (i % 3) * 2, opacity: 0.25 }
-            }
-            transition={{
-              duration: playing ? 0.55 + (i % 7) * 0.08 : 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.04,
-            }}
-          />
-        ))}
-      </div>
+  return (
+    <div
+      className={cn('relative flex items-center justify-center', className)}
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      <motion.div
+        className="pointer-events-none absolute rounded-full backdrop-blur-3xl"
+        style={{
+          width: size,
+          height: size,
+          background:
+            'radial-gradient(circle at center, rgba(20, 184, 166, 0.33) 0%, rgba(20, 184, 166, 0.15) 52%, transparent 72%)',
+        }}
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.85, 1, 0.85],
+        }}
+        transition={BREATH_CYCLE}
+      />
 
       <motion.div
-        animate={
-          playing
-            ? {
-                scale: [1, 1.04, 1],
-                boxShadow: [
-                  '0 0 60px rgba(45,212,191,0.25)',
-                  '0 0 100px rgba(45,212,191,0.45)',
-                  '0 0 60px rgba(45,212,191,0.25)',
-                ],
-              }
-            : {
-                scale: [1, 1.02, 1],
-                boxShadow: '0 0 48px rgba(45,212,191,0.2)',
-              }
-        }
-        transition={{ duration: playing ? 3.5 : 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative z-10 rounded-full"
+        className="pointer-events-none absolute rounded-full border border-[#2DD4BF]/15"
+        style={{ width: size * 1.12, height: size * 1.12 }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.2, 0.38, 0.2] }}
+        transition={{ ...BREATH_CYCLE, delay: 0.15 }}
+      />
+
+      <motion.div
+        className={cn(
+          'relative z-10 flex items-center justify-center rounded-full',
+          'border border-white/10 bg-black/25',
+          'shadow-[0_0_48px_rgba(20,184,166,0.22)]',
+        )}
+        style={{ width: orbSize, height: orbSize }}
+        animate={{ scale: [1, 1.15, 1] }}
+        transition={BREATH_CYCLE}
       >
-        <CalmaBreathLogo size={size * 0.55} />
+        <span
+          className={cn(
+            'select-none font-serif font-light leading-none tracking-tight',
+            'bg-gradient-to-b from-white via-[#e2e8f0] to-[#2DD4BF]',
+            'bg-clip-text text-transparent',
+            'drop-shadow-[0_0_18px_rgba(45,212,191,0.45)]',
+          )}
+          style={{ fontSize: orbSize * 0.42 }}
+        >
+          C
+        </span>
       </motion.div>
     </div>
   )

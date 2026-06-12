@@ -55,7 +55,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
   }, [meditation.id, meditation.duration_minutes])
 
   const streamVariant = spatial ? 'atmos' : 'stereo'
-  const spatialBadge = spatial ? 'Dolby Atmos Active' : 'Studio Master Stereo'
+  const atmosActive = spatial && streamVariant === 'atmos'
 
   const {
     playerRef,
@@ -119,7 +119,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
   if (meditation.sanctuary_status === 'coming_soon') {
     return (
       <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 rounded-3xl bg-black text-center">
-        <PlayerBreathVisualizer playing={false} size={160} />
+        <PlayerBreathVisualizer size={160} />
         <h1 className="text-xl font-light tracking-wide text-white">{meditation.title}</h1>
         <p className="text-sm text-white/50">Coming soon to the Audio Sanctuary.</p>
         <Link to="/sanctuary" className="text-sm text-[var(--accent)] hover:underline">
@@ -167,7 +167,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-5 pb-8 pt-4">
-          <PlayerBreathVisualizer playing={playing && !streamLoading} size={220} />
+          <PlayerBreathVisualizer size={220} />
 
           <div className="mt-10 max-w-md text-center">
             <h1 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
@@ -180,9 +180,20 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
               </p>
             )}
             {spatialChecked && (
-              <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#2DD4BF]/70">
-                {spatialBadge}
-              </p>
+              <motion.p
+                key={atmosActive ? 'atmos' : 'stereo'}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+                className={cn(
+                  'mt-2 text-[10px] font-semibold uppercase tracking-[0.28em]',
+                  atmosActive
+                    ? 'text-white/95 [text-shadow:0_0_10px_rgba(45,212,191,0.95),0_0_22px_rgba(203,213,225,0.65),0_0_36px_rgba(20,184,166,0.35)]'
+                    : 'text-[#2DD4BF]/70',
+                )}
+              >
+                {atmosActive ? 'DOLBY ATMOS' : 'STUDIO MASTER STEREO'}
+              </motion.p>
             )}
           </div>
 
