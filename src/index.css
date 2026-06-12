@@ -218,3 +218,20 @@ body {
     opacity: 0.4;
   }
 }
+
+/* Headless Mux engine — no visible chrome; Calma custom player owns the UI */
+mux-player.headless-mux-stream {
+  --controls: none;
+  --dialog: none;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

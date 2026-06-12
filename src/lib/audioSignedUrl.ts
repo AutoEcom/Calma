@@ -12,6 +12,7 @@ export type SignedAudioUrlResponse = {
   variant: AudioStreamVariant
   expiresIn: number
   storagePath?: string
+  source?: 'mux' | 'storage'
 }
 
 /** Short-lived signed URL for a path in the private `meditations` bucket. */

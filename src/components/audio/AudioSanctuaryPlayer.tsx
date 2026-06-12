@@ -11,11 +11,13 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { detectSpatialAudioSupport } from '../../lib/audioSpatial'
-import { useSecureHlsAudio } from '../../hooks/useSecureHlsAudio'
+import { useMediaSession } from '../../hooks/useMediaSession'
+import { useSanctuaryStream } from '../../hooks/useSanctuaryStream'
 import { recordAudioListenComplete, recordAudioPlayStart } from '../../lib/recordAudioListen'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import type { ClassDetails } from '../../lib/classTypes'
+import { HeadlessMuxStream } from './HeadlessMuxStream'
 import { PlayerBreathVisualizer } from './PlayerBreathVisualizer'
 import { cn } from '../../lib/utils'
 
@@ -56,7 +58,9 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
   const spatialBadge = spatial ? 'Dolby Atmos Active' : 'Studio Master Stereo'
 
   const {
-    audioRef,
+    playerRef,
+    streamUrl,
+    playbackId,
     loading: streamLoading,
     error: streamError,
     playing,
@@ -66,12 +70,13 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
     seek,
     seekBySeconds,
     setVolume: setAudioVolume,
-  } = useSecureHlsAudio({
+    streamHandlers,
+  } = useSanctuaryStream({
     classId: canPlay ? meditation.id : null,
     variant: streamVariant,
     enabled: canPlay,
     onPlayStart: onPlayStarted,
-    onEnded: onListenComplete,
+    onStreamEnded: onListenComplete,
   })
 
   useEffect(() => {
@@ -91,31 +96,23 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
     }
   }, [])
 
-  useEffect(() => {
-    if (!playing || !meditation) return
-    const artwork = cover ?? ''
-    if ('mediaSession' in navigator && artwork) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: meditation.title,
-        artist: `Guided by ${guide}`,
-        album: 'Calma Audio Sanctuary',
-        artwork: [{ src: artwork, sizes: '512x512', type: 'image/jpeg' }],
-      })
-      navigator.mediaSession.setActionHandler('play', () => void togglePlay())
-      navigator.mediaSession.setActionHandler('pause', () => void togglePlay())
-      navigator.mediaSession.setActionHandler('seekbackward', () => seekBySeconds(-15))
-      navigator.mediaSession.setActionHandler('seekforward', () => seekBySeconds(15))
-    }
-    return () => {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = null
-        navigator.mediaSession.setActionHandler('play', null)
-        navigator.mediaSession.setActionHandler('pause', null)
-        navigator.mediaSession.setActionHandler('seekbackward', null)
-        navigator.mediaSession.setActionHandler('seekforward', null)
-      }
-    }
-  }, [playing, meditation, guide, cover, togglePlay, seekBySeconds])
+  useMediaSession(
+    canPlay
+      ? {
+          title: meditation.title,
+          artist: `Guided by ${guide}`,
+          album: 'Calma Sanctuary',
+          artworkUrl: cover,
+        }
+      : null,
+    {
+      playing,
+      currentTime,
+      duration,
+      onTogglePlay: () => void togglePlay(),
+      onSeekBySeconds: seekBySeconds,
+    },
+  )
 
   const progress = duration > 0 ? currentTime / duration : 0
 
@@ -134,7 +131,12 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
 
   return (
     <div className="calma-premium-dark fixed inset-0 z-50 flex flex-col overflow-hidden bg-black">
-      <audio ref={audioRef} className="sr-only" playsInline />
+      <HeadlessMuxStream
+        ref={playerRef}
+        src={streamUrl}
+        playbackId={playbackId}
+        {...streamHandlers}
+      />
 
       {cover && (
         <motion.div
@@ -192,7 +194,9 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
           >
             {(streamLoading || streamError) && (
               <p className="mb-3 text-center text-xs text-white/45">
-                {streamLoading ? 'Securing stream…' : streamError}
+                {streamLoading
+                  ? 'Preparing your stream…'
+                  : 'Playback paused — tap play to continue.'}
               </p>
             )}
 
@@ -229,7 +233,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
               <button
                 type="button"
                 onClick={() => void togglePlay()}
-                disabled={streamLoading}
+                disabled={streamLoading && !playing}
                 className={cn(
                   'relative flex h-[72px] w-[72px] items-center justify-center rounded-full',
                   'border-2 border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]',
@@ -237,7 +241,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
                 )}
                 aria-label={playing ? 'Pause' : 'Play'}
               >
-                {streamLoading ? (
+                {streamLoading && !playing ? (
                   <Loader2 className="h-7 w-7 animate-spin" />
                 ) : playing ? (
                   <Pause className="h-7 w-7" />

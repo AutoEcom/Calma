@@ -64,7 +64,6 @@ export function AudioSanctuaryDashboard() {
 
       if (cancelled) return
       if (error) {
-        console.error(error)
         setItems([])
       } else {
         setItems((data ?? []) as SanctuaryRow[])
