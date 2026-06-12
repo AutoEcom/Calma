@@ -54,8 +54,8 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
     )
   }, [meditation.id, meditation.duration_minutes])
 
-  const streamVariant: 'atmos' | 'stereo' = spatial && spatialChecked ? 'atmos' : 'stereo'
-  const spatialBadge = streamVariant === 'atmos' ? 'Dolby Atmos Active' : 'Studio Master Stereo'
+  const streamVariant = spatial ? 'atmos' : 'stereo'
+  const spatialBadge = spatial ? 'Dolby Atmos Active' : 'Studio Master Stereo'
 
   const {
     playerRef,
@@ -74,7 +74,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
   } = useSanctuaryStream({
     classId: canPlay ? meditation.id : null,
     variant: streamVariant,
-    enabled: canPlay && spatialChecked,
+    enabled: canPlay,
     onPlayStart: onPlayStarted,
     onStreamEnded: onListenComplete,
   })
@@ -140,7 +140,7 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
 
       {cover && (
         <motion.div
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute inset-0"
           animate={{
             opacity: playing ? [0.35, 0.5, 0.35] : [0.25, 0.32, 0.25],
             scale: playing ? [1.05, 1.12, 1.05] : [1.02, 1.06, 1.02],
@@ -154,9 +154,9 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
           />
         </motion.div>
       )}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-black/70 to-black" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black" />
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+      <div className="relative z-10 flex flex-1 flex-col">
         <div className="px-5 pt-5">
           <Link
             to="/sanctuary"
