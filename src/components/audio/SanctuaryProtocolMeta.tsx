@@ -1,5 +1,5 @@
 import { parseAudioCredits, type AudioCredits } from '../../lib/audioSanctuary'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import { formatPlayCountLabel } from '../../lib/playCount'
 import { cn } from '../../lib/utils'
 
@@ -60,7 +60,10 @@ export function SanctuaryGuidePriceLine({
       {showPrice && priceInCents > 0 ? (
         <>
           <span className="text-white/35"> · </span>
-          <span className="font-medium text-white/90">{formatEurFromCents(priceInCents)}</span>
+          <LocalizedPrice
+            cents={priceInCents}
+            className="font-medium text-white/90"
+          />
         </>
       ) : null}
     </p>

@@ -1,6 +1,6 @@
 import { Headphones, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { useCurrency } from '../../hooks/useCurrency'
 import { GlassModal } from '../ui/GlassModal'
 import type { ClassDetails } from '../../lib/classTypes'
 
@@ -12,7 +12,8 @@ type Props = {
 }
 
 export function GuestPlayGateModal({ open, onClose, meditation, returnPath }: Props) {
-  const price = formatEurFromCents(meditation.price_in_cents)
+  const { formatFromCents } = useCurrency()
+  const price = formatFromCents(meditation.price_in_cents)
 
   return (
     <GlassModal open={open} onClose={onClose} title="Unlock this protocol">

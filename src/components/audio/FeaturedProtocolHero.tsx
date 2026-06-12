@@ -5,7 +5,7 @@ import { SanctuaryDetailModal } from './SanctuaryDetailModal'
 import { GuestPlayGateModal } from './GuestPlayGateModal'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import { formatPlayCount, resolvePlayCount } from '../../lib/playCount'
 import { sanctuaryCoverUrl, sanctuaryMeshGradient } from '../../lib/sanctuaryCover'
 import { supabase } from '../../lib/supabase'
@@ -95,9 +95,10 @@ export function FeaturedProtocolHero({ featured, hasAccess }: Props) {
                 <>
                   {' '}
                   ·{' '}
-                  <span className="font-semibold text-slate-900 dark:text-white">
-                    {formatEurFromCents(featured.price_in_cents)}
-                  </span>
+                  <LocalizedPrice
+                    cents={featured.price_in_cents}
+                    className="font-semibold text-slate-900 dark:text-white"
+                  />
                 </>
               )}
               {credits.frequency && !comingSoon ? ` · ${credits.frequency}` : ''}

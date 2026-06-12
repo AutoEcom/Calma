@@ -6,7 +6,7 @@ import {
   type AudioSanctuaryCategory,
 } from '../../lib/audioSanctuary'
 import { sanctuaryDetailPath } from '../../lib/classKind'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import { normalizeWhatToExpect } from '../../lib/whatToExpect'
 import type { Tables } from '../../lib/database.types'
@@ -66,9 +66,10 @@ export function SanctuaryDetailModal({ row, onClose }: Props) {
           {!comingSoon && (
             <>
               <span className="text-slate-400 dark:text-neutral-600"> · </span>
-              <span className="font-semibold text-slate-900 dark:text-neutral-100">
-                {formatEurFromCents(row.price_in_cents)}
-              </span>
+              <LocalizedPrice
+                cents={row.price_in_cents}
+                className="font-semibold text-slate-900 dark:text-neutral-100"
+              />
             </>
           )}
         </p>

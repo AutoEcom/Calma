@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Info, Package } from 'lucide-react'
 import { useState } from 'react'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import type { SanctuaryBundleCatalogItem } from '../../lib/sanctuaryBundles'
 import { cn } from '../../lib/utils'
 import { SanctuaryBundleModal } from './SanctuaryBundleModal'
@@ -58,7 +58,7 @@ export function SanctuaryBundleCard({ bundle, index }: Props) {
             </p>
           )}
           <p className="mt-3 text-sm font-semibold text-[var(--accent)]">
-            {formatEurFromCents(bundle.price_in_cents)}
+            <LocalizedPrice cents={bundle.price_in_cents} />
           </p>
           <button
             type="button"

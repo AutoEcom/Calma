@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { startCheckoutForBundleCatalog } from '../../lib/checkout'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import { sanctuaryDetailPath } from '../../lib/classKind'
 import { SanctuaryMetaBadges } from './SanctuaryProtocolMeta'
 import type { SanctuaryBundleCatalogItem } from '../../lib/sanctuaryBundles'
@@ -115,7 +115,7 @@ export function SanctuaryBundleModal({ bundle, onClose }: Props) {
         <div className="flex flex-col gap-3 border-t border-neutral-200/60 pt-4 dark:border-white/[0.08]">
           <p className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-neutral-100">
             <Package className="h-5 w-5 text-[var(--accent)]" />
-            {formatEurFromCents(bundle.price_in_cents)}
+            <LocalizedPrice cents={bundle.price_in_cents} />
             <span className="text-sm font-normal text-slate-600 dark:text-neutral-500">
               bundle price
             </span>

@@ -5,7 +5,7 @@ import { parseAudioCredits, formatCreditsLine } from '../../lib/audioSanctuary'
 import { normalizeWhatToExpect } from '../../lib/whatToExpect'
 import { sanctuaryDetailPath } from '../../lib/classKind'
 import type { ClassDetails } from '../../lib/classTypes'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { LocalizedPrice } from '../pricing/LocalizedPrice'
 import { NeonCardGlow } from '../ui/NeonGlow'
 import {
   badgeOnImageAccent,
@@ -78,7 +78,7 @@ export function MeditationCard({ cls, index = 0 }: Props) {
             </div>
 
             <span className={cn('absolute bottom-3 left-3', badgeOnImagePrice)}>
-              {formatEurFromCents(cls.price_in_cents)}
+              <LocalizedPrice cents={cls.price_in_cents} />
             </span>
           </div>
 

@@ -6,7 +6,7 @@ import {
   startCheckoutForSanctuaryBundle,
   startCheckoutForSanctuarySession,
 } from '../../lib/checkout'
-import { formatEurFromCents } from '../../lib/formatPrice'
+import { useCurrency } from '../../hooks/useCurrency'
 import { parseAudioCredits } from '../../lib/audioSanctuary'
 import type { ClassDetails } from '../../lib/classTypes'
 import type { SanctuaryBundleOffer } from '../../lib/sanctuaryBundles'
@@ -28,6 +28,7 @@ type Props = {
 }
 
 export function SanctuarySalesGate({ meditation, bundleOffer }: Props) {
+  const { formatFromCents } = useCurrency()
   const [checkoutLoading, setCheckoutLoading] = useState<'session' | 'bundle' | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
@@ -36,7 +37,7 @@ export function SanctuarySalesGate({ meditation, bundleOffer }: Props) {
   const cover = coverArtUrl(meditation)
   const slug = meditation.slug ?? meditation.id
   const target = { classId: meditation.id, slug }
-  const sessionPrice = formatEurFromCents(meditation.price_in_cents)
+  const sessionPrice = formatFromCents(meditation.price_in_cents)
   const usageTip =
     meditation.usage_tip?.trim() ||
     'Listen for 21 consecutive days during the New Moon cycle for deepest integration.'
@@ -206,7 +207,7 @@ export function SanctuarySalesGate({ meditation, bundleOffer }: Props) {
                   ) : (
                     <>
                       Unlock package · {bundleOffer.title} ·{' '}
-                      {formatEurFromCents(bundleOffer.price_in_cents)}
+                      {formatFromCents(bundleOffer.price_in_cents)}
                     </>
                   )}
                 </button>

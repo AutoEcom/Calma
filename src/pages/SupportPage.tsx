@@ -16,20 +16,16 @@ type InquiryType = (typeof INQUIRY_TYPES)[number]
 
 const FAQ_ITEMS = [
   {
-    q: 'How do I update billing or payment methods?',
-    a: 'Open your Dashboard and use the Stripe customer portal link to manage cards, invoices, and subscriptions. Changes apply immediately to future charges.',
+    q: 'Which headphones deliver the best spatial protocol experience?',
+    a: 'Use spatial-audio-capable earbuds (Apple AirPods Pro, Sony WF-1000 series, Bose QuietComfort Ultra) or premium over-ear headphones with head-tracking support. Wired mode reduces latency for critical HRV sessions.',
   },
   {
-    q: 'What headphones or speakers work best for spatial protocols?',
-    a: 'For Dolby Atmos and binaural entrainment, use spatial-audio-capable earbuds (Apple, Sony, Bose) or a quality over-ear headset. For live Mux sessions, stable broadband and wired headphones reduce latency.',
+    q: 'How do I configure Dolby Atmos on my devices?',
+    a: 'On iOS/macOS, enable Spatial Audio in Control Center while streaming. On Android, use compatible devices with Dolby Atmos toggled in sound settings. Desktop users should select your Atmos-capable output in system sound preferences before opening the Sanctuary player.',
   },
   {
-    q: 'Can I access purchased protocols on multiple devices?',
-    a: 'Yes. Sign in with the same account on any supported browser. Secure HLS playback uses short-lived signed URLs tied to your member profile.',
-  },
-  {
-    q: 'How do live somatic sessions differ from Audio Sanctuary?',
-    a: 'Sanctuary protocols are on-demand spatial audio matrices. Live transmissions are real-time Mux broadcasts with instructor-led movement — book via Sessions.',
+    q: 'What speaker setup is recommended for live Mux somatic sessions?',
+    a: 'For movement sessions, a stable Wi‑Fi connection and full-screen view matter more than speakers — but if using audio, prefer stereo bookshelf monitors or a soundbar with low latency Bluetooth. Wired headphones remain ideal for instructor cueing and frequency alignment.',
   },
 ] as const
 
@@ -144,7 +140,7 @@ export function SupportPage() {
 
       <div className="mt-12 border-t border-white/[0.06] pt-10">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          Self-service FAQ
+          Acoustic equipment FAQ
         </h2>
         <ul className="mt-5 space-y-2">
           {FAQ_ITEMS.map((item, i) => {
