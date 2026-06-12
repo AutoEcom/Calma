@@ -14,6 +14,8 @@ import { ProfilePage } from './pages/ProfilePage'
 import { RegisterPage } from './pages/RegisterPage'
 import { AboutMethodsPage } from './pages/AboutMethodsPage'
 import { AudioSanctuaryPage } from './pages/AudioSanctuaryPage'
+import { InsightDetailPage } from './pages/InsightDetailPage'
+import { InsightsPage } from './pages/InsightsPage'
 import { SupportPage } from './pages/SupportPage'
 import { SanctuaryMeditationPage } from './pages/SanctuaryMeditationPage'
 import { SessionsPage } from './pages/SessionsPage'
@@ -34,6 +36,8 @@ export default function App() {
           <Route path="sanctuary/:slug" element={<SanctuaryMeditationPage />} />
           <Route path="about-methods" element={<AboutMethodsPage />} />
           <Route path="about" element={<Navigate to="/about-methods" replace />} />
+          <Route path="insights" element={<InsightsPage />} />
+          <Route path="insights/:slug" element={<InsightDetailPage />} />
           <Route path="support" element={<SupportPage />} />
           <Route path="contact" element={<Navigate to="/support" replace />} />
           <Route path="profile" element={<ProfilePage />} />

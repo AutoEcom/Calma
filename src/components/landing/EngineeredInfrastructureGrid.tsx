@@ -78,13 +78,18 @@ function StripeMark() {
   )
 }
 
-function HlsMark() {
+function QuantumFlowMark() {
   return (
     <svg viewBox="0 0 120 40" className="h-8 w-auto" aria-hidden>
-      <rect x="0" y="8" width="36" height="24" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 20h6M14 16v8M20 20h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <text x="44" y="24" fill="currentColor" fontSize="11" fontWeight="600" fontFamily="ui-monospace, monospace">
-        Secure HLS
+      <path
+        d="M8 28 Q20 8 32 28 T56 28 T80 28"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <text x="44" y="24" fill="currentColor" fontSize="10" fontWeight="600" fontFamily="system-ui">
+        Quantum Flow
       </text>
     </svg>
   )
@@ -96,10 +101,10 @@ function EcosystemMark() {
       <circle cx="18" cy="18" r="10" fill="none" stroke="currentColor" strokeWidth="1.5" />
       <circle cx="18" cy="18" r="4" fill="currentColor" />
       <text x="36" y="16" fill="currentColor" fontSize="9" fontWeight="700" fontFamily="system-ui, sans-serif">
-        APP
+        MEMBER
       </text>
       <text x="36" y="28" fill="currentColor" fontSize="9" fontWeight="500" fontFamily="system-ui, sans-serif" opacity="0.8">
-        ECOSYSTEM
+        EXPERIENCE
       </text>
     </svg>
   )
@@ -125,15 +130,15 @@ const PARTNERS: Partner[] = [
     icon: <StripeMark />,
   },
   {
-    id: 'hls',
-    label: 'Secure HLS Streaming',
-    tagline: 'Signed 60s playback URLs',
-    icon: <HlsMark />,
+    id: 'flow',
+    label: 'Quantum Audio Flow',
+    tagline: 'Instant global transmission',
+    icon: <QuantumFlowMark />,
   },
   {
     id: 'ecosystem',
-    label: 'App Ecosystem Standards',
-    tagline: 'PWA · Media Session API',
+    label: 'Member Experience',
+    tagline: 'Cross-device sanctuary',
     icon: <EcosystemMark />,
   },
 ]
@@ -150,7 +155,7 @@ export function EngineeredInfrastructureGrid() {
         </h2>
         <p className="mt-4 text-sm leading-relaxed tracking-wide text-[var(--text-muted)] md:text-base">
           Studio protocols ride the same stack trusted by broadcast and fintech — spatial audio,
-          encrypted streaming, and frictionless unlocks without compromising privacy.
+          encrypted delivery, and frictionless unlocks without compromising privacy.
         </p>
       </div>
 

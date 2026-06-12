@@ -50,10 +50,10 @@ export function AppLayout() {
                 Sanctuary
               </Link>
               <Link
-                to="/#community"
+                to="/insights"
                 className="transition hover:text-slate-900 dark:hover:text-neutral-100"
               >
-                Community
+                Insights
               </Link>
             </nav>
 

@@ -48,12 +48,12 @@ export function PrivacyPage() {
       <h2>3. How We Use Your Information</h2>
       <p>We use personal information to:</p>
       <ul>
-        <li>Provide, maintain, and improve the Services, including secure HLS audio delivery;</li>
+        <li>Provide, maintain, and improve the Services, including encrypted studio-grade audio delivery;</li>
         <li>Authenticate users and enforce access to live sessions and sanctuary protocols;</li>
         <li>Process payments and fulfill purchases through Stripe;</li>
         <li>Send service-related notices, security alerts, and transactional emails;</li>
         <li>Analyze aggregated usage to optimize performance and product experience;</li>
-        <li>Comply with legal obligations and protect our rights, users, and infrastructure.</li>
+        <li>Comply with legal obligations and protect our rights, users, and platform integrity.</li>
       </ul>
 
       <h2>4. Legal Bases for Processing (EEA/UK)</h2>
@@ -81,16 +81,16 @@ export function PrivacyPage() {
       </p>
       <ul>
         <li>
-          <strong>Supabase</strong> — authentication, database, storage, and edge functions;
+          <strong>Secure identity &amp; data services</strong> — authentication, member profiles, and protected content delivery;
         </li>
         <li>
           <strong>Stripe</strong> — payment processing and billing portal;
         </li>
         <li>
-          <strong>Mux</strong> — live streaming infrastructure where applicable;
+          <strong>Live broadcast partners</strong> — cinematic live session and on-demand playback where applicable;
         </li>
         <li>
-          <strong>Vercel</strong> — application hosting and delivery.
+          <strong>Cloud hosting</strong> — application hosting and global delivery.
         </li>
       </ul>
       <p>

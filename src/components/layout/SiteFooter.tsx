@@ -45,8 +45,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link to="/#trust" className={footerLink}>
-                  Community
+                <Link to="/insights" className={footerLink}>
+                  Insights
                 </Link>
               </li>
             </ul>

@@ -78,7 +78,7 @@ export function TermsPage() {
 
       <h2>9. Third-Party Services</h2>
       <p>
-        The Services integrate third parties including Supabase, Stripe, Mux, and hosting providers.
+        The Services integrate third parties including payment processors, secure cloud partners, live broadcast providers, and hosting services.
         Your use of those services may be subject to separate terms. We are not responsible for
         third-party outages beyond our reasonable control.
       </p>

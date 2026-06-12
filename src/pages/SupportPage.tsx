@@ -7,7 +7,7 @@ const INQUIRY_TYPES = [
   'Account & billing',
   'Corporate licensing',
   'Spatial audio / equipment',
-  'Live sessions (Mux)',
+  'Live somatic sessions',
   'Technical issue',
   'Other',
 ] as const
@@ -24,8 +24,8 @@ const FAQ_ITEMS = [
     a: 'On iOS/macOS, enable Spatial Audio in Control Center while streaming. On Android, use compatible devices with Dolby Atmos toggled in sound settings. Desktop users should select your Atmos-capable output in system sound preferences before opening the Sanctuary player.',
   },
   {
-    q: 'What speaker setup is recommended for live Mux somatic sessions?',
-    a: 'For movement sessions, a stable Wi‑Fi connection and full-screen view matter more than speakers — but if using audio, prefer stereo bookshelf monitors or a soundbar with low latency Bluetooth. Wired headphones remain ideal for instructor cueing and frequency alignment.',
+    q: 'What speaker setup is recommended for live somatic sessions?',
+    a: 'For movement sessions, a stable connection and full-screen view matter more than speakers — but if using audio, prefer stereo bookshelf monitors or a soundbar with low-latency wireless. Wired headphones remain ideal for instructor cueing and frequency alignment.',
   },
 ] as const
 

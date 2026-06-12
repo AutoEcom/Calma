@@ -42,13 +42,13 @@ const ARCHITECTURE_STEPS = [
     step: '03',
     icon: Waves,
     title: 'Immersive Transition',
-    body: 'Enter the live room or activate spatial HLS playback. Studio-grade nervous-system regulation meets absolute privacy.',
+    body: 'Enter the live room or activate on-demand quantum audio flow. Studio-grade nervous-system regulation meets absolute privacy.',
   },
   {
     step: '04',
     icon: Radio,
     title: 'Somatic Kinetic Calibration',
-    body: 'Broadcasted via broadcast-grade Mux architecture, our live somatic and physical conditioning sessions lock movement to specific neural frequencies, allowing deep physiological integration and peak performance.',
+    body: 'Delivered through studio-grade cinematic broadcast, our live somatic and physical conditioning sessions lock movement to specific neural frequencies, allowing deep physiological integration and peak performance.',
   },
 ]
 
@@ -235,7 +235,7 @@ export function HomePage() {
             </li>
             <li className="flex items-start gap-3">
               <Shield className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />
-              Secure HLS + Stripe — clinical-grade delivery, private workspace
+              Encrypted checkout · instant global transmission · private workspace
             </li>
           </ul>
         </motion.div>
@@ -256,7 +256,7 @@ export function HomePage() {
               <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
                 Spatial acoustic protocols engineered across the full vibration spectrum — 174Hz
                 grounding through 528Hz repair bands to 963Hz unity states. Dolby Atmos mastering,
-                secure HLS streaming, and theta-grade entrainment designed for measurable HRV shifts —
+                high-fidelity quantum audio flow, and theta-grade entrainment designed for measurable HRV shifts —
                 not background ambience.
               </p>
             </div>
@@ -301,7 +301,7 @@ export function HomePage() {
               <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
                 Certified elite instructors lead studio-grade somatic programming — high-energy
                 and restorative conditioning engineered for peak performance and nervous-system
-                integration. Powered by ultra-low latency Mux broadcast infrastructure, every live
+                integration. Powered by ultra-low latency studio-grade cinematic broadcast, every live
                 transmission pairs kinetic calibration with synchronized frequency work, delivered in
                 broadcast fidelity to your mat.
               </p>
@@ -345,7 +345,7 @@ export function HomePage() {
           </h2>
           <p className={cn('mt-4 text-base leading-relaxed tracking-wide', calmaMuted)}>
             The science of vibrations and somatic broadcast, delivered without friction. Four
-            seamless layers from checkout to spatial playback and Mux live integration:
+            seamless layers from checkout to spatial playback and live somatic integration:
           </p>
         </div>
         <div className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-4">

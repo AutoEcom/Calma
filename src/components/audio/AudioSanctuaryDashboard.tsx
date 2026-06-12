@@ -150,7 +150,7 @@ export function AudioSanctuaryDashboard() {
           Quantum Acoustic Protocols
         </h1>
         <p className={cn('max-w-2xl text-sm leading-relaxed tracking-wide', sanctuaryMuted)}>
-          Master-grade spatial audio · secure HLS · transformation protocols engineered for deep
+          Master-grade spatial audio · instant quantum flow · transformation protocols engineered for deep
           nervous-system regulation.
         </p>
       </header>

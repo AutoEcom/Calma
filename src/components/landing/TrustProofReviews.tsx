@@ -30,7 +30,7 @@ const REVIEWS: Review[] = [
     location: 'Los Angeles, CA',
     badge: 'Verified Practitioner',
     initials: 'MV',
-    body: 'The multi-frequency architecture solves the flat-audio limitation of older apps. Streaming secure HLS tracks at 963Hz with actual spatial acoustics induces states of deep regulation that used to require hours of isolation. Phenomenal infrastructure.',
+    body: 'The multi-frequency architecture solves the flat-audio limitation of older apps. High-fidelity quantum audio flow at 963Hz with actual spatial acoustics induces states of deep regulation that used to require hours of isolation. Phenomenal craft.',
   },
 ]
 

@@ -46,7 +46,7 @@ export function RegisterPage() {
     if (signInError) {
       setError(
         signInError.message.includes('Email not confirmed')
-          ? 'Account created. Disable “Confirm email” in Supabase Auth settings for instant access, or confirm your email first.'
+          ? 'Account created. Confirm your email to activate instant access, or contact support if you need help.'
           : signInError.message,
       )
       return

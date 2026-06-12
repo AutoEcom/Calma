@@ -294,7 +294,7 @@ export function ProfilePage() {
                   {user.email}
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">
-                  Email is managed by Supabase Auth. Contact support to change it.
+                  Email is managed by your secure account profile. Contact support to change it.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">

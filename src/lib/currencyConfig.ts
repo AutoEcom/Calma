@@ -17,7 +17,6 @@ export const COUNTRY_TO_CURRENCY: Record<string, string> = {
   CZ: 'CZK',
   HU: 'HUF',
   RO: 'RON',
-  BG: 'BGN',
   IN: 'INR',
   MX: 'MXN',
   BR: 'BRL',
@@ -56,9 +55,13 @@ export const COUNTRY_TO_CURRENCY: Record<string, string> = {
 
 const EU_FALLBACK = 'EUR'
 
+/** Bulgaria always displays EUR in storefront UI (never BGN). */
+const EUR_OVERRIDE_COUNTRIES = new Set(['BG'])
+
 export function currencyForCountry(countryCode: string | null | undefined): string {
   if (!countryCode) return EU_FALLBACK
   const code = countryCode.trim().toUpperCase()
+  if (EUR_OVERRIDE_COUNTRIES.has(code)) return 'EUR'
   return COUNTRY_TO_CURRENCY[code] ?? EU_FALLBACK
 }
 
