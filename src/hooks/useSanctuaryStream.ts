@@ -28,6 +28,7 @@ export function useSanctuaryStream({
 }: Options) {
   const playerRef = useRef<MuxPlayerElement | null>(null)
   const refreshTimerRef = useRef<number | null>(null)
+  const resolveGenerationRef = useRef(0)
 
   const [streamUrl, setStreamUrl] = useState<string | null>(null)
   const [playbackId, setPlaybackId] = useState<string | null>(null)
@@ -52,10 +53,17 @@ export function useSanctuaryStream({
   }, [])
 
   const resolveStream = useCallback(
-    async (id: string, streamVariant: AudioStreamVariant, isRefresh = false) => {
+    async (
+      id: string,
+      streamVariant: AudioStreamVariant,
+      isRefresh = false,
+      generation = resolveGenerationRef.current,
+    ) => {
       if (!enabled) return
 
-      setLoading(true)
+      if (!isRefresh) {
+        setLoading(true)
+      }
       setError(false)
 
       const media = getMedia()
@@ -64,6 +72,8 @@ export function useSanctuaryStream({
 
       try {
         const result = await fetchSignedAudioUrl(id, streamVariant)
+        if (generation !== resolveGenerationRef.current) return
+
         const url = result.url
         const muxSource =
           result.source === 'mux' || isMuxStreamUrl(url) ? 'mux' : 'storage'
@@ -82,13 +92,17 @@ export function useSanctuaryStream({
         clearRefreshTimer()
         if (muxSource === 'storage') {
           refreshTimerRef.current = window.setTimeout(() => {
-            void resolveStream(id, streamVariant, true)
+            void resolveStream(id, streamVariant, true, resolveGenerationRef.current)
           }, refreshDelayMs(result.expiresIn ?? SIGNED_URL_EXPIRY_SEC))
         }
       } catch {
-        setError(true)
+        if (generation === resolveGenerationRef.current) {
+          setError(true)
+        }
       } finally {
-        setLoading(false)
+        if (generation === resolveGenerationRef.current) {
+          setLoading(false)
+        }
       }
     },
     [clearRefreshTimer, enabled, getMedia],
@@ -96,19 +110,19 @@ export function useSanctuaryStream({
 
   useEffect(() => {
     if (!enabled || !classId) {
-      setStreamUrl(null)
-      setPlaybackId(null)
+      resolveGenerationRef.current += 1
+      clearRefreshTimer()
       return
     }
 
-    void resolveStream(classId, variant)
+    const generation = ++resolveGenerationRef.current
+    void resolveStream(classId, variant, false, generation)
 
     return () => {
+      resolveGenerationRef.current += 1
       clearRefreshTimer()
       const media = getMedia()
       media?.pause()
-      setStreamUrl(null)
-      setPlaybackId(null)
     }
   }, [enabled, classId, variant, resolveStream, clearRefreshTimer, getMedia])
 
@@ -156,7 +170,7 @@ export function useSanctuaryStream({
 
   const togglePlay = useCallback(async () => {
     const media = getMedia()
-    if (!media || loading) return
+    if (!media) return
     if (media.paused) {
       try {
         await media.play()
@@ -166,7 +180,7 @@ export function useSanctuaryStream({
     } else {
       media.pause()
     }
-  }, [getMedia, loading])
+  }, [getMedia])
 
   const seek = useCallback(
     (ratio: number) => {
