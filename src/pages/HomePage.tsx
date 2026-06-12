@@ -44,6 +44,12 @@ const ARCHITECTURE_STEPS = [
     title: 'Immersive Transition',
     body: 'Enter the live room or activate spatial HLS playback. Studio-grade nervous-system regulation meets absolute privacy.',
   },
+  {
+    step: '04',
+    icon: Radio,
+    title: 'Somatic Kinetic Calibration',
+    body: 'Broadcasted via broadcast-grade Mux architecture, our live somatic and physical conditioning sessions lock movement to specific neural frequencies, allowing deep physiological integration and peak performance.',
+  },
 ]
 
 export function HomePage() {
@@ -167,9 +173,9 @@ export function HomePage() {
               calmaHeading,
             )}
           >
-            Multi-Frequency Neural Regulation.{' '}
+            Spatial Audio Protocols.{' '}
             <span className="bg-gradient-to-r from-[var(--accent)] to-[#5eead4] bg-clip-text text-transparent">
-              Spatial Acoustic Protocols.
+              Somatic Live Streams.
             </span>
           </motion.h1>
 
@@ -179,10 +185,8 @@ export function HomePage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className={cn('max-w-xl text-base leading-[1.75] tracking-wide md:text-lg', calmaMuted)}
           >
-            Calma is a hyper-premium digital sanctuary built on the science of vibrations — not
-            single-tone hacks. Curated spatial acoustic protocols span 174Hz through 963Hz for DNA
-            repair, cellular harmony, and parasympathetic nervous-system regulation. Pair immersive
-            live transmissions with on-demand neural software you can feel in minutes.
+            Multi-Frequency Neural Regulation. Experience the synthesis of clinical-grade spatial
+            audio protocols and high-fidelity, low-latency somatic live transmissions.
           </motion.p>
 
           <motion.div
@@ -217,7 +221,7 @@ export function HomePage() {
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(45,212,191,0.22),transparent_70%)] blur-2xl" />
           <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(250,204,21,0.12),transparent_70%)] blur-2xl" />
           <p className="relative text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--accent)]/90">
-            Spatial acoustic architecture
+            Dual architecture · audio &amp; live somatic
           </p>
           <FrequencySpectrumBar className="relative mt-5" />
           <ul className="relative mt-8 space-y-4 text-sm tracking-wide text-slate-600 dark:text-white/45">
@@ -295,9 +299,11 @@ export function HomePage() {
                 Upcoming Live Transmissions
               </h2>
               <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
-                Curated virtual spaces with real-time instructor presence — the kinetic complement to
-                your multi-frequency sanctuary stack. Intimate cohorts, broadcast-grade fidelity,
-                raw studio energy delivered to your mat.
+                Certified elite instructors lead MOSSA-grade somatic movement programming — high-energy
+                and restorative conditioning engineered for peak performance and nervous-system
+                integration. Powered by ultra-low latency Mux broadcast infrastructure, every live
+                transmission pairs kinetic calibration with synchronized frequency work, delivered in
+                broadcast fidelity to your mat.
               </p>
             </div>
 
@@ -338,11 +344,11 @@ export function HomePage() {
             The Architecture of Ease
           </h2>
           <p className={cn('mt-4 text-base leading-relaxed tracking-wide', calmaMuted)}>
-            The science of vibrations, delivered without friction. Three seamless layers from
-            checkout to spatial playback:
+            The science of vibrations and somatic broadcast, delivered without friction. Four
+            seamless layers from checkout to spatial playback and Mux live integration:
           </p>
         </div>
-        <div className="relative grid gap-8 md:grid-cols-3">
+        <div className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {ARCHITECTURE_STEPS.map((s, i) => (
             <motion.div
               key={s.step}
