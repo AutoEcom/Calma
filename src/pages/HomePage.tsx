@@ -299,7 +299,7 @@ export function HomePage() {
                 Upcoming Live Transmissions
               </h2>
               <p className={cn('mt-4 text-sm leading-relaxed tracking-wide md:text-base', calmaMuted)}>
-                Certified elite instructors lead MOSSA-grade somatic movement programming — high-energy
+                Certified elite instructors lead studio-grade somatic programming — high-energy
                 and restorative conditioning engineered for peak performance and nervous-system
                 integration. Powered by ultra-low latency Mux broadcast infrastructure, every live
                 transmission pairs kinetic calibration with synchronized frequency work, delivered in

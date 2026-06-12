@@ -12,7 +12,7 @@ const METHOD_SECTIONS = [
   },
   {
     title: 'High-Fidelity Somatic Movement & Mux Live Transmissions',
-    body: 'True transformation requires mapping sound to biology. Powered by ultra-low latency Mux streaming infrastructure, Calma delivers premium broadcast-grade live workout and somatic movement sessions led by certified elite instructors. Similar to MOSSA principles, these live transmissions pair high-energy or restorative physical conditioning with synchronized audio frequencies, unlocking peak kinetic performance and simultaneous nervous system integration.',
+    body: 'True transformation requires mapping sound to biology. Powered by ultra-low latency Mux streaming infrastructure, Calma delivers premium broadcast-grade live workout and somatic movement sessions led by certified elite instructors. These studio-grade live transmissions pair high-energy or restorative physical conditioning with synchronized audio frequencies, unlocking peak kinetic performance and simultaneous nervous system integration.',
   },
 ] as const
 
