@@ -21,12 +21,14 @@ export function SanctuaryMeditationPage() {
   const [bundleOffer, setBundleOffer] = useState<SanctuaryBundleOffer | null>(null)
   const [paymentSync, setPaymentSync] = useState(false)
   const [accessConfirmed, setAccessConfirmed] = useState(false)
+  const accessLatchRef = useRef(false)
   const statusHandled = useRef(false)
 
   useEffect(() => {
     statusHandled.current = false
     setPaymentSync(false)
     setAccessConfirmed(false)
+    accessLatchRef.current = false
   }, [slug])
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export function SanctuaryMeditationPage() {
     }
     const ok = await memberHasAudioAccess(user.id, meditation.id)
     setHasAccess(ok)
+    if (ok) accessLatchRef.current = true
     return ok
   }, [user?.id, meditation?.id])
 
@@ -147,7 +150,10 @@ export function SanctuaryMeditationPage() {
     return <Navigate to={`/class/${meditation.slug ?? meditation.id}`} replace />
   }
 
-  const showPlayer = user && hasAccess && meditation.sanctuary_status === 'active'
+  const showPlayer =
+    user &&
+    (hasAccess || accessLatchRef.current) &&
+    meditation.sanctuary_status === 'active'
 
   return (
     <div className="-mx-4 -my-8 w-full min-w-0 md:-mx-0">

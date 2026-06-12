@@ -17,7 +17,7 @@ type Props = {
   onError?: () => void
 }
 
-/** Invisible Mux media engine — custom Calma UI drives all visible controls. */
+/** Invisible Mux media engine — always clipped; never covers the custom player UI. */
 export const HeadlessMuxStream = forwardRef<MuxPlayerElement, Props>(function HeadlessMuxStream(
   {
     src,
@@ -34,34 +34,38 @@ export const HeadlessMuxStream = forwardRef<MuxPlayerElement, Props>(function He
   },
   ref,
 ) {
-  if (!src && !playbackId) return null
+  const hasSource = Boolean(playbackId || src)
 
   return (
-    <MuxPlayer
-      ref={ref}
-      src={playbackId ? undefined : (src ?? undefined)}
-      playbackId={playbackId ?? undefined}
-      streamType="on-demand"
-      audio
-      playsInline
-      preload="auto"
-      crossOrigin="anonymous"
-      nohotkeys
-      hotkeys=""
-      minPreloadSegments={4}
-      disableTracking
-      proudlyDisplayMuxBadge={false}
-      className="headless-mux-stream"
-      _hlsConfig={MUX_SANCTUARY_HLS_CONFIG}
-      onPlay={onPlay}
-      onPause={onPause}
-      onTimeUpdate={onTimeUpdate}
-      onDurationChange={onDurationChange}
-      onEnded={onEnded}
-      onLoadStart={onLoadStart}
-      onCanPlay={onCanPlay}
-      onWaiting={onWaiting}
-      onError={onError}
-    />
+    <div className="headless-mux-stream-shell" aria-hidden="true">
+      {hasSource ? (
+        <MuxPlayer
+          ref={ref}
+          src={playbackId ? undefined : (src ?? undefined)}
+          playbackId={playbackId ?? undefined}
+          streamType="on-demand"
+          audio
+          playsInline
+          preload="auto"
+          crossOrigin="anonymous"
+          nohotkeys
+          hotkeys=""
+          minPreloadSegments={4}
+          disableTracking
+          proudlyDisplayMuxBadge={false}
+          className="headless-mux-stream"
+          _hlsConfig={MUX_SANCTUARY_HLS_CONFIG}
+          onPlay={onPlay}
+          onPause={onPause}
+          onTimeUpdate={onTimeUpdate}
+          onDurationChange={onDurationChange}
+          onEnded={onEnded}
+          onLoadStart={onLoadStart}
+          onCanPlay={onCanPlay}
+          onWaiting={onWaiting}
+          onError={onError}
+        />
+      ) : null}
+    </div>
   )
 })
