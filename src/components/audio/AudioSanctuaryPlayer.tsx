@@ -170,11 +170,13 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
           </Link>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
-          <div className="mx-auto flex w-full max-w-md flex-col items-center px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1">
-            <PlayerBreathVisualizer playing={playing && !streamLoading} size={220} />
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+          <div className="mx-auto flex w-full max-w-md flex-col items-center overflow-visible px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6">
+            <div className="relative z-10 flex w-full justify-center overflow-visible py-4">
+              <PlayerBreathVisualizer playing={playing && !streamLoading} size={220} />
+            </div>
 
-            <div className="mt-5 w-full text-center">
+            <div className="relative z-20 mt-6 w-full text-center">
             <h1 className="text-xl font-semibold tracking-tight text-white md:text-2xl">
               {meditation.title}
             </h1>

@@ -31,7 +31,8 @@ type Props = {
 export function PlayerBreathVisualizer({ playing = false, size = 220, className }: Props) {
   const gradientId = useId().replace(/:/g, '')
   const clipId = `${gradientId}-clip`
-  const glowId = `${gradientId}-glow`
+  const cosmicGlowId = `${gradientId}-cosmic`
+  const tealGlowId = `${gradientId}-teal`
 
   const circleRadius = size * 0.1
   const geometry = useMemo(() => {
@@ -44,6 +45,7 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
   }, [circleRadius])
 
   const viewBox = `${-geometry.viewExtent} ${-geometry.viewExtent} ${geometry.viewExtent * 2} ${geometry.viewExtent * 2}`
+  const outerSpherePx = size * (geometry.outerRadius / geometry.viewExtent)
 
   return (
     <div
@@ -60,28 +62,40 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
         animate={{ scale: [1, 1.12, 1] }}
         transition={BREATH_CYCLE}
       >
-        {/* Wide cosmic halo — radiates into the upper-center void */}
+        {/* Deep cosmic-blue ambient field — wide, soft, behind geometry */}
         <motion.div
           className="pointer-events-none absolute rounded-full backdrop-blur-3xl"
           style={{
-            width: size * 1.75,
-            height: size * 1.75,
+            width: size * 1.34,
+            height: size * 1.34,
             background:
-              'radial-gradient(circle, rgba(45, 212, 191, 0.38) 0%, rgba(20, 184, 166, 0.18) 42%, rgba(15, 118, 110, 0.06) 68%, transparent 100%)',
+              'radial-gradient(circle, rgba(32, 72, 148, 0.31) 0%, rgba(22, 78, 118, 0.21) 36%, rgba(15, 40, 78, 0.15) 56%, rgba(8, 52, 80, 0.1) 74%, transparent 100%)',
           }}
-          animate={{ opacity: [0.35, 0.6, 0.35] }}
+          animate={{ opacity: [0.44, 0.68, 0.44] }}
           transition={BREATH_CYCLE}
         />
         <motion.div
-          className="pointer-events-none absolute rounded-full bg-[#14b8a6]/30 backdrop-blur-3xl"
-          style={{ width: size * 1.28, height: size * 1.28 }}
-          animate={{ opacity: [0.28, 0.52, 0.28] }}
+          className="pointer-events-none absolute rounded-full backdrop-blur-3xl"
+          style={{
+            width: size * 1.12,
+            height: size * 1.12,
+            background:
+              'radial-gradient(circle, rgba(44, 96, 168, 0.21) 0%, rgba(24, 88, 118, 0.14) 42%, rgba(15, 23, 42, 0.11) 58%, transparent 100%)',
+          }}
+          animate={{ opacity: [0.36, 0.58, 0.36] }}
           transition={BREATH_CYCLE}
         />
+
+        {/* Subtle teal core blend — low density, nested inside blue field */}
         <motion.div
-          className="pointer-events-none absolute rounded-full bg-[#2DD4BF]/22 backdrop-blur-3xl"
-          style={{ width: size * 0.98, height: size * 0.98 }}
-          animate={{ opacity: [0.35, 0.6, 0.35] }}
+          className="pointer-events-none absolute rounded-full backdrop-blur-2xl"
+          style={{
+            width: size * 0.86,
+            height: size * 0.86,
+            background:
+              'radial-gradient(circle, rgba(45, 212, 191, 0.18) 0%, rgba(20, 184, 166, 0.09) 42%, transparent 72%)',
+          }}
+          animate={{ opacity: [0.24, 0.4, 0.24] }}
           transition={BREATH_CYCLE}
         />
 
@@ -94,12 +108,18 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
           {AMBIENT_RING_SCALES.map((scale, index) => (
             <div
               key={scale}
-              className="absolute rounded-full border border-[#2DD4BF]/22"
+              className="absolute rounded-full border border-[#2DD4BF]/14"
               style={{
                 width: size * scale,
                 height: size * scale,
-                opacity: 0.32 - index * 0.06,
-                boxShadow: '0 0 24px rgba(20, 184, 166, 0.12)',
+                opacity: 0.18 - index * 0.04,
+                ...(index === AMBIENT_RING_SCALES.length - 1
+                  ? {
+                      borderColor: 'rgba(45, 212, 191, 0.26)',
+                      boxShadow:
+                        '0 0 10px rgba(20, 184, 166, 0.22), 0 0 38px rgba(45, 212, 191, 0.12)',
+                    }
+                  : {}),
               }}
             />
           ))}
@@ -122,13 +142,13 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
                 top: `calc(50% + ${y}px)`,
                 marginLeft: -particle.size / 2,
                 marginTop: -particle.size / 2,
-                boxShadow: '0 0 8px rgba(45, 212, 191, 0.85), 0 0 14px rgba(20, 184, 166, 0.45)',
+                boxShadow: '0 0 6px rgba(45, 212, 191, 0.55), 0 0 10px rgba(20, 184, 166, 0.28)',
               }}
               animate={{
-                opacity: playing ? [0.15, 0.85, 0.2] : [0.12, 0.55, 0.15],
-                scale: [0.85, 1.25, 0.9],
-                x: [0, Math.cos(rad) * 6, 0],
-                y: [0, Math.sin(rad) * 6, 0],
+                opacity: playing ? [0.1, 0.65, 0.15] : [0.08, 0.4, 0.12],
+                scale: [0.85, 1.15, 0.9],
+                x: [0, Math.cos(rad) * 4, 0],
+                y: [0, Math.sin(rad) * 4, 0],
               }}
               transition={{
                 duration: particle.duration,
@@ -140,15 +160,24 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
           )
         })}
 
+        {/* Outermost sphere — whisper-soft cyan halo */}
+        <motion.div
+          className="pointer-events-none absolute rounded-full"
+          style={{
+            width: outerSpherePx * 1.1,
+            height: outerSpherePx * 1.1,
+            border: '1px solid rgba(94, 234, 212, 0.22)',
+            boxShadow:
+              '0 0 10px rgba(20, 184, 166, 0.22), 0 0 36px rgba(45, 212, 191, 0.14), 0 0 52px rgba(20, 184, 166, 0.08), inset 0 0 24px rgba(45, 212, 191, 0.06)',
+          }}
+          animate={{ opacity: [0.38, 0.56, 0.38] }}
+          transition={BREATH_CYCLE}
+        />
+
         <svg
           viewBox={viewBox}
           className="pointer-events-none relative overflow-visible"
-          style={{
-            width: size,
-            height: size,
-            filter:
-              'drop-shadow(0 0 25px rgba(20, 184, 166, 0.55)) drop-shadow(0 0 50px rgba(20, 184, 166, 0.75)) drop-shadow(0 0 95px rgba(20, 184, 166, 0.38))',
-          }}
+          style={{ width: size, height: size }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -157,20 +186,17 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
               <stop offset="65%" stopColor="#2DD4BF" stopOpacity="0.9" />
               <stop offset="100%" stopColor="#0f766e" stopOpacity="0.85" />
             </linearGradient>
-            <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#5eead4" stopOpacity="0.55" />
-              <stop offset="45%" stopColor="#14b8a6" stopOpacity="0.32" />
-              <stop offset="78%" stopColor="#14b8a6" stopOpacity="0.12" />
+            <radialGradient id={cosmicGlowId} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#1e4a8a" stopOpacity="0.28" />
+              <stop offset="32%" stopColor="#1a5c7a" stopOpacity="0.16" />
+              <stop offset="55%" stopColor="#0f172a" stopOpacity="0.13" />
+              <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id={tealGlowId} cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#5eead4" stopOpacity="0.21" />
+              <stop offset="70%" stopColor="#14b8a6" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
             </radialGradient>
-            <filter id={`${gradientId}-ambient`} x="-120%" y="-120%" width="340%" height="340%">
-              <feGaussianBlur stdDeviation="18" result="ambientBlur" />
-              <feColorMatrix
-                in="ambientBlur"
-                type="matrix"
-                values="0 0 0 0 0.06  0 0 0 0 0.78  0 0 0 0 0.68  0 0 0 0.65 0"
-              />
-            </filter>
             <clipPath id={clipId}>
               <circle cx={0} cy={0} r={geometry.outerRadius} />
             </clipPath>
@@ -179,20 +205,20 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
           <circle
             cx={0}
             cy={0}
-            r={geometry.outerRadius * 1.65}
-            fill={`url(#${glowId})`}
-            filter={`url(#${gradientId}-ambient)`}
+            r={geometry.outerRadius * 1.28}
+            fill={`url(#${cosmicGlowId})`}
           />
-
           <circle
             cx={0}
             cy={0}
-            r={geometry.outerRadius * 1.08}
-            fill={`url(#${glowId})`}
-            opacity={0.85}
+            r={geometry.outerRadius * 1.06}
+            fill={`url(#${tealGlowId})`}
           />
 
-          <g clipPath={`url(#${clipId})`}>
+          <g
+            clipPath={`url(#${clipId})`}
+            style={{ filter: 'drop-shadow(0 0 25px rgba(20, 184, 166, 0.55))' }}
+          >
             {[0.16, 0.3, 0.48].map((opacity, layer) => (
               <g key={opacity}>
                 {geometry.circles.map((circle) => (
@@ -214,11 +240,25 @@ export function PlayerBreathVisualizer({ playing = false, size = 220, className 
           <circle
             cx={0}
             cy={0}
+            r={geometry.outerRadius * 1.05}
+            fill="none"
+            stroke="#5eead4"
+            strokeWidth={circleRadius * 0.24}
+            strokeOpacity={0.18}
+          />
+
+          <circle
+            cx={0}
+            cy={0}
             r={geometry.outerRadius}
             fill="none"
             stroke={`url(#${gradientId})`}
             strokeWidth={circleRadius * 0.09}
             strokeOpacity={0.55}
+            style={{
+              filter:
+                'drop-shadow(0 0 10px rgba(20, 184, 166, 0.22)) drop-shadow(0 0 36px rgba(45, 212, 191, 0.1))',
+            }}
           />
         </svg>
       </motion.div>
