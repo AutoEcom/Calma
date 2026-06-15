@@ -1,7 +1,7 @@
-/** Google Drive sharing URL → raw streaming download endpoint. */
+/** Google Drive sharing URL → raw streaming download endpoint (large-file bypass). */
 const GDRIVE_FILE_PATH = /drive\.google\.com\/file\/d\/([^/?#]+)/i
 const GDRIVE_OPEN_ID = /drive\.google\.com\/open\?[^#]*\bid=([^&#]+)/i
-const GDRIVE_UC_ID = /docs\.google\.com\/uc\?(?:[^#]*&)?id=([^&#]+)/i
+const GDRIVE_UC_ID = /(?:docs|drive)\.google\.com\/uc\?(?:[^#]*&)?id=([^&#]+)/i
 
 export function extractGoogleDriveFileId(url: string): string | null {
   const trimmed = url.trim()
@@ -12,6 +12,11 @@ export function extractGoogleDriveFileId(url: string): string | null {
   return null
 }
 
+/** Large-file bypass: confirm=t skips Google Drive virus-scan interstitial HTML. */
+export function buildGoogleDriveStreamUrl(fileId: string): string {
+  return `https://drive.google.com/uc?id=${fileId}&export=download&confirm=t`
+}
+
 /** Resolve admin-configured Atmos URL to a browser-playable direct stream. */
 export function resolveAtmosStreamUrl(raw: string): string {
   const trimmed = raw.trim()
@@ -19,7 +24,7 @@ export function resolveAtmosStreamUrl(raw: string): string {
 
   const fileId = extractGoogleDriveFileId(trimmed)
   if (fileId) {
-    return `https://docs.google.com/uc?export=download&id=${fileId}`
+    return buildGoogleDriveStreamUrl(fileId)
   }
 
   return trimmed
