@@ -11,16 +11,14 @@ const breathTransition = {
 type Props = {
   className?: string
   size?: number
+  /** When false, outer breath motion is delegated to PlayerBreathVisualizer. */
+  breathe?: boolean
 }
 
-export function CalmaBreathLogo({ className, size = 120 }: Props) {
-  return (
-    <motion.div
-      className={cn('relative flex items-center justify-center', className)}
-      animate={{ scale: [1, 1.08, 1], opacity: [0.85, 1, 0.85] }}
-      transition={breathTransition}
-      aria-hidden
-    >
+export function CalmaBreathLogo({ className, size = 120, breathe = true }: Props) {
+  const shell = cn('relative flex items-center justify-center', className)
+  const inner = (
+    <>
       <div
         className="absolute rounded-full bg-[#2DD4BF]/20 blur-3xl"
         style={{ width: size * 1.6, height: size * 1.6 }}
@@ -52,6 +50,25 @@ export function CalmaBreathLogo({ className, size = 120 }: Props) {
           </linearGradient>
         </defs>
       </svg>
+    </>
+  )
+
+  if (!breathe) {
+    return (
+      <div className={shell} aria-hidden>
+        {inner}
+      </div>
+    )
+  }
+
+  return (
+    <motion.div
+      className={shell}
+      animate={{ scale: [1, 1.08, 1], opacity: [0.85, 1, 0.85] }}
+      transition={breathTransition}
+      aria-hidden
+    >
+      {inner}
     </motion.div>
   )
 }

@@ -1,14 +1,19 @@
-import type MuxPlayerElement from '@mux/mux-player'
+import Hls from 'hls.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   fetchSignedAudioUrl,
   SIGNED_URL_EXPIRY_SEC,
   type AudioStreamVariant,
 } from '../lib/audioSignedUrl'
-import { isMuxStreamUrl, parseMuxPlaybackId } from '../lib/muxStreamPlayback'
+import { isMuxStreamUrl, MUX_SANCTUARY_HLS_CONFIG } from '../lib/muxStreamPlayback'
 
 function refreshDelayMs(expiresIn: number): number {
   return Math.max(20_000, (expiresIn - 20) * 1000)
+}
+
+function isNativeHls(): boolean {
+  const probe = document.createElement('video')
+  return probe.canPlayType('application/vnd.apple.mpegurl') !== ''
 }
 
 type Options = {
@@ -26,23 +31,22 @@ export function useSanctuaryStream({
   onPlayStart,
   onStreamEnded,
 }: Options) {
-  const playerRef = useRef<MuxPlayerElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const hlsRef = useRef<Hls | null>(null)
   const refreshTimerRef = useRef<number | null>(null)
   const resolveGenerationRef = useRef(0)
 
-  const [streamUrl, setStreamUrl] = useState<string | null>(null)
-  const [playbackId, setPlaybackId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
 
-  const getMedia = useCallback((): HTMLMediaElement | null => {
-    const el = playerRef.current
-    if (!el) return null
-    const native = (el as MuxPlayerElement & { media?: HTMLMediaElement }).media
-    return native ?? (el as unknown as HTMLMediaElement)
+  const destroyHls = useCallback(() => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy()
+      hlsRef.current = null
+    }
   }, [])
 
   const clearRefreshTimer = useCallback(() => {
@@ -52,49 +56,83 @@ export function useSanctuaryStream({
     }
   }, [])
 
-  const resolveStream = useCallback(
+  const attachHls = useCallback(
     async (
-      id: string,
-      streamVariant: AudioStreamVariant,
-      isRefresh = false,
-      generation = resolveGenerationRef.current,
+      url: string,
+      options: { isRefresh: boolean; isMux: boolean; expiresIn: number; generation: number },
     ) => {
-      if (!enabled) return
+      const audio = audioRef.current
+      if (!audio || options.generation !== resolveGenerationRef.current) return
+
+      if (!options.isRefresh) {
+        destroyHls()
+      }
+
+      const savedTime = options.isRefresh ? audio.currentTime : 0
+      const wasPlaying = options.isRefresh && !audio.paused
+
+      audio.controls = false
+      audio.preload = 'auto'
+      audio.crossOrigin = 'anonymous'
+      audio.disableRemotePlayback = false
+
+      if (isNativeHls()) {
+        audio.src = url
+      } else if (Hls.isSupported()) {
+        if (!hlsRef.current) {
+          const hls = new Hls({
+            ...MUX_SANCTUARY_HLS_CONFIG,
+            xhrSetup: (xhr) => {
+              xhr.withCredentials = false
+            },
+          })
+          hlsRef.current = hls
+          hls.attachMedia(audio)
+        }
+        hlsRef.current.loadSource(url)
+      } else {
+        throw new Error('HLS is not supported in this browser')
+      }
+
+      if (options.isRefresh && savedTime > 0) {
+        audio.currentTime = savedTime
+        if (wasPlaying) {
+          await audio.play().catch(() => undefined)
+        }
+      }
+
+      clearRefreshTimer()
+      if (!options.isMux) {
+        refreshTimerRef.current = window.setTimeout(() => {
+          void resolveAndAttach(true, resolveGenerationRef.current)
+        }, refreshDelayMs(options.expiresIn))
+      }
+    },
+    [clearRefreshTimer, destroyHls],
+  )
+
+  const resolveAndAttach = useCallback(
+    async (isRefresh = false, generation = resolveGenerationRef.current) => {
+      if (!enabled || !classId || generation !== resolveGenerationRef.current) return
 
       if (!isRefresh) {
         setLoading(true)
       }
       setError(false)
 
-      const media = getMedia()
-      const savedTime = isRefresh && media ? media.currentTime : 0
-      const wasPlaying = isRefresh && media ? !media.paused : false
-
       try {
-        const result = await fetchSignedAudioUrl(id, streamVariant)
+        const result = await fetchSignedAudioUrl(classId, variant)
         if (generation !== resolveGenerationRef.current) return
 
-        const url = result.url
-        const muxSource =
-          result.source === 'mux' || isMuxStreamUrl(url) ? 'mux' : 'storage'
+        const url = result.url.trim()
+        const isMux = result.source === 'mux' || isMuxStreamUrl(url)
 
-        const idFromUrl = parseMuxPlaybackId(url)
-        setPlaybackId(idFromUrl)
-        setStreamUrl(idFromUrl ? null : url)
-
-        if (isRefresh && media && savedTime > 0) {
-          media.currentTime = savedTime
-          if (wasPlaying) {
-            await media.play().catch(() => undefined)
-          }
-        }
-
-        clearRefreshTimer()
-        if (muxSource === 'storage') {
-          refreshTimerRef.current = window.setTimeout(() => {
-            void resolveStream(id, streamVariant, true, resolveGenerationRef.current)
-          }, refreshDelayMs(result.expiresIn ?? SIGNED_URL_EXPIRY_SEC))
-        }
+        await attachHls(url, {
+          isRefresh,
+          isMux,
+          expiresIn: result.expiresIn ?? SIGNED_URL_EXPIRY_SEC,
+          generation,
+        })
       } catch {
         if (generation === resolveGenerationRef.current) {
           setError(true)
@@ -105,7 +143,7 @@ export function useSanctuaryStream({
         }
       }
     },
-    [clearRefreshTimer, enabled, getMedia],
+    [attachHls, classId, enabled, variant],
   )
 
   useEffect(() => {
@@ -116,102 +154,106 @@ export function useSanctuaryStream({
     }
 
     const generation = ++resolveGenerationRef.current
-    void resolveStream(classId, variant, false, generation)
+    void resolveAndAttach(false, generation)
 
     return () => {
       resolveGenerationRef.current += 1
       clearRefreshTimer()
-      getMedia()?.pause()
+      destroyHls()
+      const audio = audioRef.current
+      if (audio) {
+        audio.pause()
+        audio.removeAttribute('src')
+        audio.load()
+      }
     }
-  }, [enabled, classId, variant, resolveStream, clearRefreshTimer, getMedia])
+  }, [enabled, classId, variant, resolveAndAttach, clearRefreshTimer, destroyHls])
 
-  const onPlay = useCallback(() => {
-    setPlaying(true)
-    onPlayStart?.()
-  }, [onPlayStart])
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
 
-  const onPause = useCallback(() => {
-    setPlaying(false)
-  }, [])
+    const onTime = () => setCurrentTime(audio.currentTime)
+    const onMeta = () => setDuration(audio.duration || 0)
+    const onPlay = () => {
+      setPlaying(true)
+      onPlayStart?.()
+    }
+    const onPause = () => setPlaying(false)
+    const onEnd = () => {
+      setPlaying(false)
+      onStreamEnded?.()
+    }
+    const onLoadStart = () => setLoading(true)
+    const onCanPlay = () => {
+      setLoading(false)
+      setError(false)
+    }
+    const onWaiting = () => setLoading(true)
+    const onMediaError = () => {
+      setLoading(false)
+      setError(true)
+    }
 
-  const onTimeUpdate = useCallback(() => {
-    const media = getMedia()
-    if (media) setCurrentTime(media.currentTime)
-  }, [getMedia])
+    audio.addEventListener('timeupdate', onTime)
+    audio.addEventListener('loadedmetadata', onMeta)
+    audio.addEventListener('durationchange', onMeta)
+    audio.addEventListener('play', onPlay)
+    audio.addEventListener('pause', onPause)
+    audio.addEventListener('ended', onEnd)
+    audio.addEventListener('loadstart', onLoadStart)
+    audio.addEventListener('canplay', onCanPlay)
+    audio.addEventListener('waiting', onWaiting)
+    audio.addEventListener('error', onMediaError)
 
-  const onDurationChange = useCallback(() => {
-    const media = getMedia()
-    if (media) setDuration(media.duration || 0)
-  }, [getMedia])
-
-  const onEnded = useCallback(() => {
-    setPlaying(false)
-    onStreamEnded?.()
-  }, [onStreamEnded])
-
-  const onLoadStart = useCallback(() => {
-    setLoading(true)
-  }, [])
-
-  const onCanPlay = useCallback(() => {
-    setLoading(false)
-    setError(false)
-  }, [])
-
-  const onWaiting = useCallback(() => {
-    setLoading(true)
-  }, [])
-
-  const onStreamError = useCallback(() => {
-    setLoading(false)
-    setError(true)
-  }, [])
+    return () => {
+      audio.removeEventListener('timeupdate', onTime)
+      audio.removeEventListener('loadedmetadata', onMeta)
+      audio.removeEventListener('durationchange', onMeta)
+      audio.removeEventListener('play', onPlay)
+      audio.removeEventListener('pause', onPause)
+      audio.removeEventListener('ended', onEnd)
+      audio.removeEventListener('loadstart', onLoadStart)
+      audio.removeEventListener('canplay', onCanPlay)
+      audio.removeEventListener('waiting', onWaiting)
+      audio.removeEventListener('error', onMediaError)
+    }
+  }, [onPlayStart, onStreamEnded])
 
   const togglePlay = useCallback(async () => {
-    const media = getMedia()
-    if (!media) return
-    if (media.paused) {
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.paused) {
       try {
-        await media.play()
+        await audio.play()
       } catch {
         setError(true)
       }
     } else {
-      media.pause()
+      audio.pause()
     }
-  }, [getMedia])
+  }, [])
 
-  const seek = useCallback(
-    (ratio: number) => {
-      const media = getMedia()
-      if (!media || !Number.isFinite(media.duration)) return
-      media.currentTime = Math.max(0, Math.min(1, ratio)) * media.duration
-    },
-    [getMedia],
-  )
+  const seek = useCallback((ratio: number) => {
+    const audio = audioRef.current
+    if (!audio || !Number.isFinite(audio.duration)) return
+    audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration
+  }, [])
 
-  const seekBySeconds = useCallback(
-    (delta: number) => {
-      const media = getMedia()
-      if (!media || !Number.isFinite(media.duration)) return
-      media.currentTime = Math.max(0, Math.min(media.duration, media.currentTime + delta))
-    },
-    [getMedia],
-  )
+  const seekBySeconds = useCallback((delta: number) => {
+    const audio = audioRef.current
+    if (!audio || !Number.isFinite(audio.duration)) return
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + delta))
+  }, [])
 
-  const setVolume = useCallback(
-    (level: number) => {
-      const media = getMedia()
-      if (!media) return
-      media.volume = Math.max(0, Math.min(1, level))
-    },
-    [getMedia],
-  )
+  const setVolume = useCallback((level: number) => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.volume = Math.max(0, Math.min(1, level))
+  }, [])
 
   return {
-    playerRef,
-    streamUrl,
-    playbackId,
+    audioRef,
     loading,
     error,
     playing,
@@ -221,16 +263,5 @@ export function useSanctuaryStream({
     seek,
     seekBySeconds,
     setVolume,
-    streamHandlers: {
-      onPlay,
-      onPause,
-      onTimeUpdate,
-      onDurationChange,
-      onEnded,
-      onLoadStart,
-      onCanPlay,
-      onWaiting,
-      onError: onStreamError,
-    },
   }
 }
