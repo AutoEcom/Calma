@@ -129,6 +129,7 @@ export type Database = {
         Row: {
           audio_cover_art_url: string | null
           audio_credits: Json
+          atmos_source_url: string | null
           audio_hls_atmos_key: string | null
           audio_hls_stereo_key: string | null
           audio_sanctuary_category:
@@ -169,6 +170,7 @@ export type Database = {
         Insert: {
           audio_cover_art_url?: string | null
           audio_credits?: Json
+          atmos_source_url?: string | null
           audio_hls_atmos_key?: string | null
           audio_hls_stereo_key?: string | null
           audio_sanctuary_category?:
@@ -209,6 +211,7 @@ export type Database = {
         Update: {
           audio_cover_art_url?: string | null
           audio_credits?: Json
+          atmos_source_url?: string | null
           audio_hls_atmos_key?: string | null
           audio_hls_stereo_key?: string | null
           audio_sanctuary_category?:

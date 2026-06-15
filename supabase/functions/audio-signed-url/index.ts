@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
   const { data: cls, error: classErr } = await admin
     .from('classes')
     .select(
-      'id,is_audio_sanctuary,sanctuary_status,audio_hls_atmos_key,audio_hls_stereo_key',
+      'id,is_audio_sanctuary,sanctuary_status,atmos_source_url,audio_hls_stereo_key',
     )
     .eq('id', classId)
     .maybeSingle()
@@ -130,7 +130,27 @@ Deno.serve(async (req) => {
   }
 
   const storagePath =
-    variant === 'atmos' ? cls.audio_hls_atmos_key : cls.audio_hls_stereo_key
+    variant === 'atmos' ? null : cls.audio_hls_stereo_key
+
+  if (variant === 'atmos') {
+    const atmosUrl = cls.atmos_source_url?.trim()
+    if (!atmosUrl) {
+      return new Response(JSON.stringify({ error: 'Atmos stream not configured' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    return new Response(
+      JSON.stringify({
+        url: atmosUrl,
+        variant,
+        expiresIn: SIGNED_URL_EXPIRY_SEC,
+        source: 'direct',
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
 
   if (!storagePath) {
     return new Response(JSON.stringify({ error: 'Stream not configured' }), {

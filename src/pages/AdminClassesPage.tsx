@@ -55,7 +55,7 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 function defaultAudioFormState(): AudioSanctuaryFormState {
   return {
-    audioHlsAtmosKey: '',
+    atmosSourceUrl: '',
     audioHlsStereoKey: '',
     usageTip: '',
     sanctuaryStatus: 'active',
@@ -253,7 +253,7 @@ export function AdminClassesPage() {
     )
     const credits = parseAudioCredits(row.audio_credits)
     setAudioForm({
-      audioHlsAtmosKey: row.audio_hls_atmos_key ?? '',
+      atmosSourceUrl: row.atmos_source_url ?? '',
       audioHlsStereoKey: row.audio_hls_stereo_key ?? '',
       usageTip: row.usage_tip ?? '',
       sanctuaryStatus:
@@ -404,7 +404,7 @@ export function AdminClassesPage() {
       isMeditationMode &&
       audioForm.sanctuaryStatus === 'active' &&
       !audioForm.audioHlsStereoKey.trim() &&
-      !audioForm.audioHlsAtmosKey.trim()
+      !audioForm.atmosSourceUrl.trim()
     ) {
       setError('Active meditations require at least one stream URL (Atmos or Stereo).')
       return
@@ -454,7 +454,7 @@ export function AdminClassesPage() {
       sanctuary_status: isMeditationMode ? audioForm.sanctuaryStatus : null,
       badge: isMeditationMode ? audioForm.badge.trim() || null : null,
       usage_tip: isMeditationMode ? audioForm.usageTip.trim() || null : null,
-      audio_hls_atmos_key: isMeditationMode ? audioForm.audioHlsAtmosKey.trim() || null : null,
+      atmos_source_url: isMeditationMode ? audioForm.atmosSourceUrl.trim() || null : null,
       audio_hls_stereo_key: isMeditationMode ? audioForm.audioHlsStereoKey.trim() || null : null,
       audio_credits: isMeditationMode ? (audioCredits as unknown as Json) : ({} as Json),
     }

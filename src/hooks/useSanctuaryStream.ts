@@ -1,5 +1,6 @@
 import Hls from 'hls.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { resolveAtmosStreamUrl } from '../lib/atmosSourceUrl'
 import {
   fetchSignedAudioUrl,
   SIGNED_URL_EXPIRY_SEC,
@@ -55,6 +56,36 @@ export function useSanctuaryStream({
       refreshTimerRef.current = null
     }
   }, [])
+
+  const attachDirect = useCallback(
+    async (
+      url: string,
+      options: { isRefresh: boolean; generation: number },
+    ) => {
+      const audio = audioRef.current
+      if (!audio || options.generation !== resolveGenerationRef.current) return
+
+      destroyHls()
+      clearRefreshTimer()
+
+      const savedTime = options.isRefresh ? audio.currentTime : 0
+      const wasPlaying = options.isRefresh && !audio.paused
+
+      audio.controls = false
+      audio.preload = 'auto'
+      audio.crossOrigin = 'anonymous'
+      audio.disableRemotePlayback = false
+      audio.src = url
+
+      if (options.isRefresh && savedTime > 0) {
+        audio.currentTime = savedTime
+        if (wasPlaying) {
+          await audio.play().catch(() => undefined)
+        }
+      }
+    },
+    [clearRefreshTimer, destroyHls],
+  )
 
   const attachHls = useCallback(
     async (
@@ -125,6 +156,14 @@ export function useSanctuaryStream({
         if (generation !== resolveGenerationRef.current) return
 
         const url = result.url.trim()
+        const isDirectAtmos = variant === 'atmos' || result.source === 'direct'
+
+        if (isDirectAtmos) {
+          const streamUrl = resolveAtmosStreamUrl(url)
+          await attachDirect(streamUrl, { isRefresh, generation })
+          return
+        }
+
         const isMux = result.source === 'mux' || isMuxStreamUrl(url)
 
         await attachHls(url, {
@@ -143,7 +182,7 @@ export function useSanctuaryStream({
         }
       }
     },
-    [attachHls, classId, enabled, variant],
+    [attachDirect, attachHls, classId, enabled, variant],
   )
 
   useEffect(() => {

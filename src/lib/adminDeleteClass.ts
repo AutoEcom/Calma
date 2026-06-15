@@ -59,7 +59,6 @@ export async function deleteClassPermanently(row: ClassDetails): Promise<{ error
   await removeFolderPrefix(CLASS_MEDIA_BUCKET, `classes/${row.id}`)
 
   const meditationPaths: string[] = []
-  if (row.audio_hls_atmos_key) meditationPaths.push(row.audio_hls_atmos_key)
   if (row.audio_hls_stereo_key) meditationPaths.push(row.audio_hls_stereo_key)
 
   await removeStoragePaths(MEDITATIONS_BUCKET, meditationPaths)

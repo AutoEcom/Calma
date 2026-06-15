@@ -6,6 +6,7 @@ import {
   type AudioSanctuaryCategory,
   type AudioSanctuaryStatus,
 } from '../../lib/audioSanctuary'
+import { isLikelyAtmosSourceUrl } from '../../lib/atmosSourceUrl'
 import { directUploadToMuxHls } from '../../lib/muxDirectUpload'
 import { slugifyTitle } from '../../lib/slugify'
 import { cn } from '../../lib/utils'
@@ -17,7 +18,7 @@ export const BADGE_PRESETS = [
 ] as const
 
 export type AudioSanctuaryFormState = {
-  audioHlsAtmosKey: string
+  atmosSourceUrl: string
   audioHlsStereoKey: string
   usageTip: string
   sanctuaryStatus: AudioSanctuaryStatus
@@ -159,13 +160,9 @@ export function AudioSanctuaryAdminSettings({ title, state, onChange }: Props) {
       </p>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <MuxStreamField
-          label="Atmos HLS path"
-          hint="Dolby Atmos master — .mp3, .mp4, or .wav"
-          variant="atmos"
-          slug={slug}
-          value={state.audioHlsAtmosKey}
-          onChange={(v) => onChange({ audioHlsAtmosKey: v })}
+        <AtmosSourceUrlField
+          value={state.atmosSourceUrl}
+          onChange={(v) => onChange({ atmosSourceUrl: v })}
         />
         <MuxStreamField
           label="Stereo HLS path"
@@ -177,6 +174,43 @@ export function AudioSanctuaryAdminSettings({ title, state, onChange }: Props) {
         />
       </div>
     </section>
+  )
+}
+
+function AtmosSourceUrlField({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (v: string) => void
+}) {
+  const trimmed = value.trim()
+  const valid = !trimmed || isLikelyAtmosSourceUrl(trimmed)
+
+  return (
+    <div className="space-y-2 rounded-xl border border-[var(--border)] bg-[var(--surface)]/60 p-4">
+      <p className="flex items-center gap-2 text-xs font-semibold text-[var(--text)]">
+        <Waves className="h-3.5 w-3.5 text-[var(--accent)]" />
+        Dolby Atmos Source URL (Google Drive / Direct Link)
+      </p>
+      <p className="text-[10px] text-[var(--text-muted)]">
+        Paste a Google Drive share link or direct HTTPS URL to the spatial master (.mp4 with
+        ec-3). Bypasses Mux — Safari CoreAudio handles native Atmos pass-through.
+      </p>
+      <input
+        type="url"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="https://drive.google.com/file/d/…/view"
+        className={cn(
+          'w-full rounded-lg border bg-[var(--page-bg)] px-3 py-2 font-mono text-xs text-[var(--text)] outline-none focus:border-[var(--accent)]',
+          valid ? 'border-[var(--border)]' : 'border-red-400/60',
+        )}
+      />
+      {!valid && (
+        <p className="text-xs text-red-400">Enter a valid https URL or Google Drive share link.</p>
+      )}
+    </div>
   )
 }
 

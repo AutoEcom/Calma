@@ -17,7 +17,7 @@ insert into public.classes (
   audio_credits,
   badge,
   usage_tip,
-  audio_hls_atmos_key,
+  atmos_source_url,
   audio_hls_stereo_key
 )
 values
@@ -37,7 +37,7 @@ values
     '{"guide":"Maya","frequency":"528Hz / Theta Beats","studio":"Pro Audio Lab"}'::jsonb,
     'New Moon Protocol',
     'The 21-Day Quantum Protocol: Listen for 21 consecutive days during the New Moon cycle.',
-    'new-moon-abundance/atmos/master.m3u8',
+    null,
     'new-moon-abundance/stereo/master.m3u8'
   ),
   (
