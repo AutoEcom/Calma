@@ -1,22 +1,32 @@
 /**
+ * Strict synchronous EC-3 / Dolby Atmos decode capability probe.
+ * iOS without spatial output (e.g. no AirPods) usually returns empty or "maybe" — not "probably".
+ */
+export function isAtmosEc3PlaybackSupported(): boolean {
+  if (typeof window === 'undefined') return false
+
+  if (typeof window.MediaSource !== 'undefined') {
+    try {
+      if (window.MediaSource.isTypeSupported('audio/mp4; codecs="ec-3"')) {
+        return true
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  if (typeof Audio === 'undefined') return false
+  const audio = new Audio()
+  return audio.canPlayType('audio/mp4; codecs="ec-3"') === 'probably'
+}
+
+/**
  * Detect native spatial / E-AC3 (Dolby Atmos) playback support (Safari iOS/macOS primary).
  */
 export async function detectSpatialAudioSupport(): Promise<boolean> {
   if (typeof document === 'undefined') return false
 
-  const audio = document.createElement('audio')
-  const eac3 =
-    audio.canPlayType('audio/mp4; codecs="ec-3"') ||
-    audio.canPlayType('audio/eac3') ||
-    audio.canPlayType('audio/mp4; codecs="ec+3"')
-
-  if (eac3 === 'probably') return true
-
-  const isApple =
-    /iPhone|iPad|iPod|Macintosh|Mac OS X/.test(navigator.userAgent) &&
-    !!(audio.canPlayType('application/vnd.apple.mpegurl') || audio.canPlayType('application/x-mpegURL'))
-
-  if (!isApple) return eac3 === 'maybe'
+  if (isAtmosEc3PlaybackSupported()) return true
 
   if ('mediaCapabilities' in navigator) {
     try {
@@ -24,16 +34,16 @@ export async function detectSpatialAudioSupport(): Promise<boolean> {
         type: 'file',
         audio: {
           contentType: 'audio/mp4; codecs="ec-3"',
-          channels: '6',
-          bitrate: 256000,
+          channels: '16',
+          bitrate: 512000,
           samplerate: 48000,
         },
       })
-      if (result.supported) return true
+      return result.supported
     } catch {
-      /* fall through */
+      return false
     }
   }
 
-  return eac3 === 'maybe' || isApple
+  return false
 }

@@ -1,5 +1,6 @@
 import Hls from 'hls.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { isAtmosEc3PlaybackSupported } from '../lib/audioSpatial'
 import { resolveAtmosStreamUrl } from '../lib/atmosSourceUrl'
 import {
   fetchSignedAudioUrl,
@@ -8,6 +9,8 @@ import {
 } from '../lib/audioSignedUrl'
 import { isMuxStreamUrl, MUX_SANCTUARY_HLS_CONFIG } from '../lib/muxStreamPlayback'
 
+const ATMOS_STALL_MS = 12_000
+
 function refreshDelayMs(expiresIn: number): number {
   return Math.max(20_000, (expiresIn - 20) * 1000)
 }
@@ -15,6 +18,15 @@ function refreshDelayMs(expiresIn: number): number {
 function isNativeHls(): boolean {
   const probe = document.createElement('video')
   return probe.canPlayType('application/vnd.apple.mpegurl') !== ''
+}
+
+function resolveEffectiveVariant(
+  requested: AudioStreamVariant,
+  stereoFallback: boolean,
+): AudioStreamVariant {
+  if (requested !== 'atmos') return requested
+  if (stereoFallback || !isAtmosEc3PlaybackSupported()) return 'stereo'
+  return 'atmos'
 }
 
 type Options = {
@@ -35,7 +47,13 @@ export function useSanctuaryStream({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const hlsRef = useRef<Hls | null>(null)
   const refreshTimerRef = useRef<number | null>(null)
+  const atmosStallTimerRef = useRef<number | null>(null)
   const resolveGenerationRef = useRef(0)
+  const stereoFallbackRef = useRef(false)
+  const directAtmosActiveRef = useRef(false)
+  const resolveAndAttachRef = useRef<
+    (isRefresh?: boolean, generation?: number, overrideVariant?: AudioStreamVariant) => Promise<void>
+  >(async () => {})
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
@@ -54,6 +72,13 @@ export function useSanctuaryStream({
     if (refreshTimerRef.current) {
       window.clearTimeout(refreshTimerRef.current)
       refreshTimerRef.current = null
+    }
+  }, [])
+
+  const clearAtmosStallWatch = useCallback(() => {
+    if (atmosStallTimerRef.current) {
+      window.clearTimeout(atmosStallTimerRef.current)
+      atmosStallTimerRef.current = null
     }
   }, [])
 
@@ -95,6 +120,9 @@ export function useSanctuaryStream({
       const audio = audioRef.current
       if (!audio || options.generation !== resolveGenerationRef.current) return
 
+      directAtmosActiveRef.current = false
+      clearAtmosStallWatch()
+
       if (!options.isRefresh) {
         destroyHls()
       }
@@ -135,15 +163,52 @@ export function useSanctuaryStream({
       clearRefreshTimer()
       if (!options.isMux) {
         refreshTimerRef.current = window.setTimeout(() => {
-          void resolveAndAttach(true, resolveGenerationRef.current)
+          void resolveAndAttachRef.current(true, resolveGenerationRef.current)
         }, refreshDelayMs(options.expiresIn))
       }
     },
-    [clearRefreshTimer, destroyHls],
+    [clearAtmosStallWatch, clearRefreshTimer, destroyHls],
+  )
+
+  const triggerStereoFallback = useCallback((generation: number) => {
+    if (stereoFallbackRef.current || variant !== 'atmos') return
+    stereoFallbackRef.current = true
+    directAtmosActiveRef.current = false
+    clearAtmosStallWatch()
+    void resolveAndAttachRef.current(false, generation, 'stereo')
+  }, [clearAtmosStallWatch, variant])
+
+  const startAtmosStallWatch = useCallback(
+    (generation: number) => {
+      clearAtmosStallWatch()
+      atmosStallTimerRef.current = window.setTimeout(() => {
+        const audio = audioRef.current
+        if (
+          generation !== resolveGenerationRef.current ||
+          !directAtmosActiveRef.current ||
+          !audio
+        ) {
+          return
+        }
+        const stalled =
+          audio.readyState < HTMLMediaElement.HAVE_CURRENT_DATA &&
+          audio.currentTime === 0 &&
+          (audio.networkState === HTMLMediaElement.NETWORK_LOADING ||
+            audio.networkState === HTMLMediaElement.NETWORK_IDLE)
+        if (stalled) {
+          triggerStereoFallback(generation)
+        }
+      }, ATMOS_STALL_MS)
+    },
+    [clearAtmosStallWatch, triggerStereoFallback],
   )
 
   const resolveAndAttach = useCallback(
-    async (isRefresh = false, generation = resolveGenerationRef.current) => {
+    async (
+      isRefresh = false,
+      generation = resolveGenerationRef.current,
+      overrideVariant?: AudioStreamVariant,
+    ) => {
       if (!enabled || !classId || generation !== resolveGenerationRef.current) return
 
       if (!isRefresh) {
@@ -152,23 +217,25 @@ export function useSanctuaryStream({
       setError(false)
 
       try {
-        const result = await fetchSignedAudioUrl(classId, variant)
+        const requested = overrideVariant ?? variant
+        const effective = resolveEffectiveVariant(requested, stereoFallbackRef.current)
+        const result = await fetchSignedAudioUrl(classId, effective)
         if (generation !== resolveGenerationRef.current) return
 
         const url = result.url.trim()
-        const isDirectAtmos = variant === 'atmos' || result.source === 'direct'
+        const isDirectAtmos = effective === 'atmos' && result.source === 'direct'
 
         if (isDirectAtmos) {
+          directAtmosActiveRef.current = true
           const streamUrl = resolveAtmosStreamUrl(url)
           await attachDirect(streamUrl, { isRefresh, generation })
+          startAtmosStallWatch(generation)
           return
         }
 
-        const isMux = result.source === 'mux' || isMuxStreamUrl(url)
-
         await attachHls(url, {
           isRefresh,
-          isMux,
+          isMux: result.source === 'mux' || isMuxStreamUrl(url),
           expiresIn: result.expiresIn ?? SIGNED_URL_EXPIRY_SEC,
           generation,
         })
@@ -182,13 +249,21 @@ export function useSanctuaryStream({
         }
       }
     },
-    [attachDirect, attachHls, classId, enabled, variant],
+    [attachDirect, attachHls, classId, enabled, startAtmosStallWatch, variant],
   )
+
+  resolveAndAttachRef.current = resolveAndAttach
+
+  useEffect(() => {
+    stereoFallbackRef.current = false
+    directAtmosActiveRef.current = false
+  }, [classId])
 
   useEffect(() => {
     if (!enabled || !classId) {
       resolveGenerationRef.current += 1
       clearRefreshTimer()
+      clearAtmosStallWatch()
       return
     }
 
@@ -198,6 +273,7 @@ export function useSanctuaryStream({
     return () => {
       resolveGenerationRef.current += 1
       clearRefreshTimer()
+      clearAtmosStallWatch()
       destroyHls()
       const audio = audioRef.current
       if (audio) {
@@ -206,7 +282,15 @@ export function useSanctuaryStream({
         audio.load()
       }
     }
-  }, [enabled, classId, variant, resolveAndAttach, clearRefreshTimer, destroyHls])
+  }, [
+    enabled,
+    classId,
+    variant,
+    resolveAndAttach,
+    clearRefreshTimer,
+    clearAtmosStallWatch,
+    destroyHls,
+  ])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -225,11 +309,21 @@ export function useSanctuaryStream({
     }
     const onLoadStart = () => setLoading(true)
     const onCanPlay = () => {
+      clearAtmosStallWatch()
       setLoading(false)
       setError(false)
     }
     const onWaiting = () => setLoading(true)
     const onMediaError = () => {
+      const code = audio.error?.code
+      if (
+        directAtmosActiveRef.current &&
+        variant === 'atmos' &&
+        (code === MediaError.MEDIA_ERR_DECODE || code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED)
+      ) {
+        triggerStereoFallback(resolveGenerationRef.current)
+        return
+      }
       setLoading(false)
       setError(true)
     }
@@ -257,7 +351,7 @@ export function useSanctuaryStream({
       audio.removeEventListener('waiting', onWaiting)
       audio.removeEventListener('error', onMediaError)
     }
-  }, [onPlayStart, onStreamEnded])
+  }, [clearAtmosStallWatch, onPlayStart, onStreamEnded, triggerStereoFallback, variant])
 
   const togglePlay = useCallback(async () => {
     const audio = audioRef.current
@@ -266,12 +360,16 @@ export function useSanctuaryStream({
       try {
         await audio.play()
       } catch {
+        if (directAtmosActiveRef.current && variant === 'atmos') {
+          triggerStereoFallback(resolveGenerationRef.current)
+          return
+        }
         setError(true)
       }
     } else {
       audio.pause()
     }
-  }, [])
+  }, [triggerStereoFallback, variant])
 
   const seek = useCallback((ratio: number) => {
     const audio = audioRef.current
