@@ -18,6 +18,7 @@ import { parseAudioCredits } from '../../lib/audioSanctuary'
 import { sanctuaryCoverUrl } from '../../lib/sanctuaryCover'
 import type { ClassDetails } from '../../lib/classTypes'
 import { PlayerBreathVisualizer } from './PlayerBreathVisualizer'
+import { StreamQualityBadge } from './StreamQualityBadge'
 import { cn } from '../../lib/utils'
 
 function formatTime(sec: number): string {
@@ -188,25 +189,23 @@ export function AudioSanctuaryPlayer({ meditation }: Props) {
             )}
 
             {spatialChecked && isAtmosActive ? (
-              <motion.p
+              <motion.div
                 key="atmos"
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, ease: 'easeOut' }}
-                className="sanctuary-atmos-glow mt-4 text-[11px] font-bold uppercase tracking-[0.38em] text-[#a7f3d0]"
               >
-                Dolby Atmos
-              </motion.p>
+                <StreamQualityBadge mode="atmos" />
+              </motion.div>
             ) : spatialChecked ? (
-              <motion.p
+              <motion.div
                 key="stereo"
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
-                className="mt-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/35"
               >
-                Studio Master Stereo
-              </motion.p>
+                <StreamQualityBadge mode="stereo" />
+              </motion.div>
             ) : null}
 
             <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/42">
