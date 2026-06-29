@@ -4,10 +4,10 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { cn } from '../../lib/utils'
 
 const STEREO_UNLOCK_MESSAGE =
-  'За да отключите това изживяване в 3D Dolby Atmos пространствен звук, моля свържете своите AirPods (или съвместими Dolby Atmos слушалки) и се уверете, че използвате браузъра Safari на вашето Apple устройство.'
+  'To unlock this experience in immersive 3D Dolby Atmos spatial audio, please connect your AirPods (or compatible Dolby Atmos headphones) and ensure you are using the Safari browser on your Apple device.'
 
 const ATMOS_ACTIVE_MESSAGE =
-  'Пространственият 3D Dolby Atmos звук е активен. Насладете се на дълбоко и пълно потапяне в медитацията.'
+  'Immersive 3D Dolby Atmos audio is active. Enjoy your deep journey into the sanctuary.'
 
 type Props = {
   mode: 'atmos' | 'stereo'
